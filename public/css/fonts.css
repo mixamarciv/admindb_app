@@ -1,0 +1,17 @@
+/* font 10100.otf
+-------------------------------------------------- */
+@font-face {
+	font-family: ff1; /* Гарнитура шрифта */
+	src: url(/public/fonts/10100.otf); /* Путь к файлу со шрифтом */
+}
+ff1 {
+	font-family: ff1, 'Lucida Console', cursive;
+}
+
+@font-face {
+	font-family: ff2; 
+	src: url(/public/fonts/9789.ttf); 
+}
+ff2 {
+	font-family: ff2, 'Lucida Console', cursive;
+}

@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>AdminCodeBase.info</title>
+	
+	
+	<link rel="shortcut icon" type="image/ico" href="/public/img/favicon.ico">
+	
+	<link rel='stylesheet' href='/public/css/minify.{{if eq .sess.style "white" }}white{{else}}dark{{end}}.css' />
+	<!--
+    <link rel='stylesheet' href='/public/css/bootstrap{ {if .s.white}}.white{ {else}}.dark{ {end}}.min.css' />
+
+	<link rel="stylesheet" href="/public/css/blueimp-gallery.min.css">
+	<link rel='stylesheet' href='/public/css/bootstrap-image-gallery.min.css' />
+
+	<link rel='stylesheet' href='/public/css/stickyfooter.css' />
+	<link rel='stylesheet' href='/public/css/fonts.css' />
+	-->
+	<link rel='stylesheet' href='/public/css/styles.css' />
+	
+
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	
+	<script type='text/javascript' src='/public/js/minify.all.js'></script>
+	<!--
+	<script type='text/javascript' src='/public/js/jquery.min.js'></script>
+	<script type='text/javascript' src='/public/js/bootstrap.min.js'></script>
+	
+	<script type="text/javascript" src="/public/js/jquery.blueimp-gallery.min.js"></script>
+	<script type='text/javascript' src='/public/js/bootstrap-image-gallery.min.js'></script>
+	
+	<script type='text/javascript' src='/public/js/scripts.js'></script>
+	-->
+
+  </head>
+<body>
+
+<stdscripts>
+<script language='javascript'>
+$(document).ready(function(){
+	$('#change_template').tooltip({
+		container:'body',
+		dalay:{"show": 500, "hide":100},
+		template:'<div class="tooltip" role="tooltip"><div class="tooltip-arrow"></div><div class="tooltip-inner" style="width:250px;font-size:150%;"></div></div>'
+	});
+	$('#change_template').tooltip('show')
+	setTimeout(function(){
+		$('#change_template').tooltip('hide')
+	},4000);
+})
+</script>
+</stdscripts>
+
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="true">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="/">
+			<big><big><big><big><ff2><!--Админ вРашке.net--> AdminCodeBase.info </ff2> &nbsp;</big></big></big></big>	
+	  </a>
+    </div>
+
+    <div class="navbar-collapse collapse in" id="bs-example-navbar-collapse-1" aria-expanded="true">
+		  <ul class="nav navbar-nav">
+				  <li><a><ff1>записи</ff1><b>:</b></a></li>
+	              <li><a href="/s?a"><ff1>Администратора</ff1></a></li>
+	              <li><a href="/s?p"><ff1>Программиста</ff1></a></li>
+	              <li><a href="/s?s"><ff1>Похуиста</ff1></a></li>
+	      </ul>
+		  <ul class="nav navbar-nav navbar-right">
+		      <li>
+	                <div class="col-md-8">
+	                <a 	href="{{.http_request.requestURI}}&ssesstyle={{if eq .sess.style "dark" }}white{{else}}dark{{end}}" class="btn" 
+						id="change_template" data-toggle="tooltip" data-placement="bottom"
+						title="переключить {{if eq .sess.style "dark" }}к яркой версии сайта{{else}}к темной версии сайта для усталых и красных глазок ){{end}}">
+	                  <img  src="/public/img/template_image_{{if eq .sess.style "dark" }}white{{else}}dark{{end}}.png" class="pull-right" 
+							alt="переключить {{if eq .sess.style "dark" }}к яркой версии сайта{{else}}к темной версии сайта для усталых и красных глазок ){{end}}"
+							style="width:30px;"
+							>
+	                </a>
+	                </div>
+	          </li>
+		  </ul>
+    </div>
+  </div>
+</nav>
+
+
+<!--header class="header">
+    <% content 'header' %>
+</header-->
+
+
+  
+<div class="container">
+	{{block "content" .}} Default content {{ end }} 
+</div>
+  
+
+
+<div class="container" style="display:block;">
+	<!-- The Bootstrap Image Gallery lightbox, should be a child element of the document body -->
+	<div id="blueimp-gallery" class="blueimp-gallery" data-use-bootstrap-modal="false">
+	    <!-- The container for the modal slides -->
+	    <div class="slides"></div>
+	    <!-- Controls for the borderless lightbox -->
+	    <h3 class="title"></h3>
+	    <a class="prev">‹</a>
+	    <a class="next">›</a>
+	    <a class="close">×</a>
+	    <a class="play-pause"></a>
+	    <ol class="indicator"></ol>
+	    <!-- The modal dialog, which will be used to wrap the lightbox content -->
+	    <div class="modal fade">
+	        <div class="modal-dialog">
+	            <div class="modal-content">
+	                <div class="modal-header">
+	                    <button type="button" class="close" aria-hidden="true">&times;</button>
+	                    <h4 class="modal-title"></h4>
+	                </div>
+	                <div class="modal-body next"></div>
+	                <div class="modal-footer">
+	                    <button type="button" class="btn btn-default pull-left prev">
+	                        <i class="glyphicon glyphicon-chevron-left"></i>
+	                        Предыдущая
+	                    </button>
+	                    <button type="button" class="btn btn-primary next">
+	                        Следующая
+	                        <i class="glyphicon glyphicon-chevron-right"></i>
+	                    </button>
+	                </div>
+	            </div>
+	        </div>
+	    </div>
+	</div>
+</div>
+
+
+<footer class="footer">
+  <!--div class="container">
+    <% content 'footer' %>
+  </div-->
+  <small><small>
+  <div class="col-md-10">
+        <div class="col-md-6">
+	        <p class="text-muted">
+				<a class="mailto" href="mailto:mixamarciv@gmail.com">написать администратору</a>
+			</p>
+			
+			<!--
+            <div class="col-md-6">
+                  наши сайты:<br>
+                  <a href="http://master.vrashke.ru">мастер на час в городе Сыктывкар</a><br>
+                  <a href="http://фонд-инта.рф">Благотворительный фонд города Инта</a><br>
+                  <a href="http://uzkh-inta.vrashke.ru">МКУ УЖКХ город Инта</a><br>
+            </div>
+            <div class="col-md-6">
+                  <a href="http://vrashke.net">vrashke.net</a><br>
+                  <a href="http://vrashke.com">vrashke.com</a><br>
+                  <a href="http://vrashke.ru">vrashke.ru</a><br>
+                  <a href="http://врашке.рф">врашке.рф</a><br>
+            </div>
+			-->
+			
+        </div>
+  </div>
+  <div class="col-md-2">
+      
+	  loadtime: {{ floadTime }}
+      <!-- server time: <%- @g.moment().format('YYYY.MM.DD HH:mm:ss'); %><br>
+      <%- @get_execute_time() %>
+	  -->
+  </div>
+  </small></small>
+</footer>
+
+
+</body>
+</html>
