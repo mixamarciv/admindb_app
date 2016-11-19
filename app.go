@@ -3,6 +3,7 @@ package main
 import (
 	//"log"
 	"net/http"
+	"net/url"
 	"time"
 
 	//"github.com/gorilla/context"
@@ -69,7 +70,10 @@ func http_main(w http.ResponseWriter, r *http.Request) {
 func http_search(w http.ResponseWriter, r *http.Request) {
 	d := map[string]interface{}{}
 
-	RenderTemplate(w, r, d, "maintemplate.html", "main.html")
+	v, _ := url.ParseQuery(r.URL.RawQuery)
+	d["values"] = v
+
+	RenderTemplate(w, r, d, "maintemplate.html", "search.html")
 }
 
 func http_404(w http.ResponseWriter, r *http.Request) {

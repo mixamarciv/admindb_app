@@ -4,10 +4,10 @@ import (
 	"bytes"
 	"fmt"
 
-	"net/http"
-
+	"html"
 	"html/template"
 	"io/ioutil"
+	"net/http"
 
 	//mf "github.com/mixamarciv/gofncstd3000"
 	//"reflect"
@@ -40,6 +40,13 @@ func RenderTemplate(w http.ResponseWriter, r *http.Request, d map[string]interfa
 		},
 		"floadTime": func() interface{} {
 			return GetLoadTime(r)
+		},
+		"dump": func(v interface{}) string {
+			return html.EscapeString(fmt.Sprintf("%+v", v))
+		},
+		"dump_t": func() string {
+			return fmt.Sprintf("%#v", r.URL)
+			//return html.EscapeString(fmt.Sprintf("%#v", r.URL))
 		},
 	}
 

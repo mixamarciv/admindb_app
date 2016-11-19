@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	//"net/url"
 	"time"
 
 	"github.com/gorilla/context"
@@ -37,7 +38,7 @@ func LogReq(f func(http.ResponseWriter, *http.Request)) func(http.ResponseWriter
 		context.Set(r, "startLoadTime", time.Now())
 		log.Print("<- " + r.URL.Scheme + " " + r.URL.Path)
 
-		if r.URL.ForceQuery { //проверяем что бы обязательно были заданы хотябы 1 параметр после ?
+		if r.URL.RawQuery == "" { //проверяем что бы обязательно были заданы хотябы 1 параметр после ?
 			http.Redirect(w, r, "/?main", 301)
 			log.Print("## redirect to /?main ")
 			return
