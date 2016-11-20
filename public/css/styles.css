@@ -96,7 +96,8 @@ body {
 	width: 100%;
 	/* Set the fixed height of the footer here */
 	height: 60px;
-	background-color: #233535; 
-	border: 1px solid #334545;
+	background-color: #021313;
+	border: 0px solid #132525; 
+	border-top: 1px solid #132525;
 }
 

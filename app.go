@@ -3,7 +3,6 @@ package main
 import (
 	//"log"
 	"net/http"
-	"net/url"
 	"time"
 
 	//"github.com/gorilla/context"
@@ -67,15 +66,10 @@ func http_main(w http.ResponseWriter, r *http.Request) {
 	//context.Get(r, "nextfunc").(func(http.ResponseWriter, *http.Request))(w, r)
 }
 
-func http_search(w http.ResponseWriter, r *http.Request) {
-	d := map[string]interface{}{}
-
-	v, _ := url.ParseQuery(r.URL.RawQuery)
-	d["values"] = v
-
-	RenderTemplate(w, r, d, "maintemplate.html", "search.html")
-}
-
 func http_404(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("404\npage not found\n\n\n"))
+}
+
+func user_check_access(w http.ResponseWriter, r *http.Request, d map[string]interface{}) error {
+	return nil
 }

@@ -4,4 +4,203 @@
   {{dump_t}}
 </code>
 <code class="container"> {{.values}} </code>
+
+
+
+
+<style type="text/css">
+
+/*
+.container {width: 960px; margin: 0 auto; overflow: hidden;}
+.content {width:800px; margin:0 auto; padding-top:50px;}
+.contentBar {width:90px; margin:0 auto; padding-top:50px; padding-bottom:50px;}
+*/
+
+
+/* Second Loadin Circle */
+
+.circle {
+	background-color: rgba(0,0,0,0);
+	border:5px solid rgba(0,183,229,0.9);
+	opacity:.9;
+	border-right:5px solid rgba(0,0,0,0);
+	border-left:5px solid rgba(0,0,0,0);
+	border-radius:50px;
+	box-shadow: 0 0 35px #2187e7;
+	width:50px;
+	height:50px;
+	margin:0 auto;
+	top:0px;
+	-moz-animation:spinPulse 1s infinite ease-in-out;
+	-webkit-animation:spinPulse 1s infinite linear;
+}
+.circle1 {
+	background-color: rgba(0,0,0,0);
+	border:7px solid rgba(0,183,229,0.9);
+	opacity:.9;
+	border-left:5px solid rgba(0,0,0,0);
+	border-right:5px solid rgba(0,0,0,0);
+	border-radius:50px;
+	box-shadow: 0 0 8px #2187e7; 
+	width:32px;
+	height:32px;
+	margin:0 auto;
+	position:relative;
+	top:-40px;
+	-moz-animation:spinoffPulse 0.3s infinite linear;
+	-webkit-animation:spinoffPulse 0.3s infinite linear;
+}
+
+.circle2 {
+	background-color: rgba(0,0,0,0);
+	border:10px solid rgba(0,183,229,0.9);
+	opacity:.9;
+	border-left:5px solid rgba(0,0,0,0);
+	border-right:5px solid rgba(0,0,0,0);
+	border-radius:50px;
+	box-shadow: 0 0 20px #2187e7; 
+	width:12px;
+	height:12px;
+	margin:0 auto;
+	position:relative;
+	top:-65px;
+	-moz-animation:spinPulse 0.7s infinite linear;
+	-webkit-animation:spinPulse 0.7s infinite linear;
+}
+
+@-moz-keyframes spinPulse {
+	0% { -moz-transform:rotate(160deg); opacity:0; box-shadow:0 0 1px #2187e7;}
+	50% { -moz-transform:rotate(145deg); opacity:1; }
+	100% { -moz-transform:rotate(-320deg); opacity:0; }
+}
+@-webkit-keyframes spinPulse {
+	0% { -webkit-transform:rotate(160deg); opacity:0; box-shadow:0 0 1px #2187e7; }
+	50% { -webkit-transform:rotate(145deg); opacity:1;}
+	100% { -webkit-transform:rotate(-320deg); opacity:0; }
+}
+@-moz-keyframes spinoffPulse {
+	0% { -moz-transform:rotate(0deg); }
+	100% { -moz-transform:rotate(360deg);  }
+}
+@-webkit-keyframes spinoffPulse {
+	0% { -webkit-transform:rotate(0deg); }
+	100% { -webkit-transform:rotate(360deg); }
+}
+@-moz-keyframes spinoffPulseR {
+	0% { -moz-transform:rotate(360deg); }
+	100% { -moz-transform:rotate(0deg);  }
+}
+@-webkit-keyframes spinoffPulseR {
+	0% { -webkit-transform:rotate(360deg); }
+	100% { -webkit-transform:rotate(0deg); }
+}
+
+</style>
+
+<div style="width: 960px; margin: 0 auto; overflow: hidden;">
+	<div class="circle"></div>
+	<div class="circle1"></div>
+	<div class="circle2"></div>
+</div>
+
+	
+	
+<style type="text/css">
+
+/*
+.container {width: 960px; margin: 0 auto; overflow: hidden;}
+.content {width:800px; margin:0 auto; padding-top:50px;}
+.contentBar {width:90px; margin:0 auto; padding-top:50px; padding-bottom:50px;}
+*/
+
+
+/* Second Loadin Circle */
+
+.progressBar0 {
+	background-color: rgba(0,0,0,0);
+	border:5px solid rgba(0,183,229,0.9);
+	opacity:.9;
+	border-right:5px solid rgba(0,0,0,0);
+	border-left:5px solid rgba(0,0,0,0);
+	border-radius:50px;
+	box-shadow: 0 0 35px #2187e7;
+	width:50px;
+	height:50px;
+	margin:0 auto;
+	top:10px;
+	padding-top:20px;
+	margin-top:20px;
+	-moz-animation:progressBar0 1s infinite ease-in-out;
+	-webkit-animation:progressBar0 1s infinite linear;
+}
+.progressBar1 {
+	background-color: rgba(0,0,0,0);
+	border:15px solid rgba(0,183,229,0.9);
+	opacity:1;
+	border-left:15px solid rgba(0,0,0,0);
+	border-right:15px solid rgba(0,0,0,0);
+	border-radius:50px;
+	box-shadow: 0 0 8px #2187e7; 
+	width:32px;
+	height:32px;
+	margin:0 auto;
+	position:relative;
+	top:-40px;
+	-moz-animation:progressBar1 0.4s infinite linear;
+	-webkit-animation:progressBar1 0.4s infinite linear;
+}
+
+.progressBar2 {
+	background-color: rgba(0,0,0,0);
+	border:15px solid rgba(0,183,229,0.9);
+	opacity:1;
+	border-left:15px solid rgba(0,0,0,0);
+	border-right:15px solid rgba(0,0,0,0);
+	border-radius:50px;
+	box-shadow: 0 0 8px #2187e7; 
+	width:32px;
+	height:32px;
+	margin:0 auto;
+	position:relative;
+	top:-72px;
+	-moz-animation:progressBar2 0.3s infinite linear;
+	-webkit-animation:progressBar2 0.3s infinite linear;
+}
+
+@-moz-keyframes progressBar0 {
+	0% { -moz-transform:rotate(160deg); opacity:0; box-shadow:0 0 1px #2187e7;}
+	50% { -moz-transform:rotate(145deg); opacity:1; }
+	100% { -moz-transform:rotate(-320deg); opacity:0; }
+}
+@-webkit-keyframes progressBar0 {
+	0% { -webkit-transform:rotate(160deg); opacity:0; box-shadow:0 0 1px #2187e7; }
+	50% { -webkit-transform:rotate(145deg); opacity:1;}
+	100% { -webkit-transform:rotate(-320deg); opacity:0; }
+}
+@-moz-keyframes progressBar1 {
+	0% { -moz-transform:rotate(0deg); }
+	100% { -moz-transform:rotate(360deg);  }
+}
+@-webkit-keyframes progressBar1 {
+	0% { -webkit-transform:rotate(0deg); }
+	100% { -webkit-transform:rotate(360deg); }
+}
+@-moz-keyframes progressBar2 {
+	0% { -moz-transform:rotate(360deg); }
+	100% { -moz-transform:rotate(0deg);  }
+}
+@-webkit-keyframes progressBar2 {
+	0% { -webkit-transform:rotate(360deg); }
+	100% { -webkit-transform:rotate(0deg); }
+}
+
+</style>
+
+<div style="width: 960px; margin: 10px; paddind:10px; overflow: hidden;">
+	<div class="progressBar0"></div>
+	<div class="progressBar1"></div>
+	<div class="progressBar2"></div>
+</div>
+
+	
 {{end}}

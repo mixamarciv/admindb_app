@@ -36,7 +36,7 @@ func InitDb() {
 
 	dbmap["a"] = conn_to_db("admin", apppath+"/db/DB_ADMIN.FDB", false)
 	dbmap["p"] = conn_to_db("programming", apppath+"/db/DB_PROGRAMMING.FDB", false)
-	dbmap["s"] = conn_to_db("secret", apppath+"/db/DB_SECRET.FDB", true)
+	dbmap["s"] = conn_to_db("warez", apppath+"/db/DB_WAREZ.FDB", true)
 }
 
 func conn_to_db(name, path string, NeedAuth bool) *DBd {
