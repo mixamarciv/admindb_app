@@ -34,9 +34,10 @@ func (p *NullString) get(defaultval string) string {
 func InitDb() {
 	dbmap = make(map[string]*DBd)
 
+	dbmap["users"] = conn_to_db("users", apppath+"/db/DB_USERS.FDB", false)
 	dbmap["a"] = conn_to_db("admin", apppath+"/db/DB_ADMIN.FDB", false)
 	dbmap["p"] = conn_to_db("programming", apppath+"/db/DB_PROGRAMMING.FDB", false)
-	dbmap["s"] = conn_to_db("warez", apppath+"/db/DB_WAREZ.FDB", true)
+	dbmap["w"] = conn_to_db("warez", apppath+"/db/DB_WAREZ.FDB", true)
 }
 
 func conn_to_db(name, path string, NeedAuth bool) *DBd {
