@@ -69,13 +69,15 @@ $(document).ready(function(){
 
     <div class="navbar-collapse collapse in" id="bs-example-navbar-collapse-1" aria-expanded="true">
 		  <ul class="nav navbar-nav">
-				  <li><a><ff1>записи</ff1><b>:</b></a></li>
-	              <li><a href="/s?a"><ff1>Администратора</ff1></a></li>
-	              <li><a href="/s?p"><ff1>Программиста</ff1></a></li>
-	              <li><a href="/s?v"><ff1>Варез</ff1></a></li>
+				  <!-- li><a><ff1>записи</ff1><b>:</b></a></li -->
+	              <li><a href="/s?d=a"><ff1>Администрирование</ff1></a></li>
+	              <li><a href="/s?d=p"><ff1>Программирование</ff1></a></li>
+	              <li><a href="/s?d=v"><ff1>Варез</ff1></a></li>
 	      </ul>
 		  <ul class="nav navbar-nav navbar-right">
 		      <li>
+					<a href="/login?pox"><b>Login</b></a>
+					<!--<ff2><big><big></big></big></ff2>
 	                <div class="col-md-8">
 	                <a 	href="{{.http_request.requestURI}}&ssesstyle={{if eq .sess.style "dark" }}white{{else}}dark{{end}}" class="btn" 
 						id="change_template" data-toggle="tooltip" data-placement="bottom"
@@ -86,6 +88,7 @@ $(document).ready(function(){
 							>
 	                </a>
 	                </div>
+					-->
 	          </li>
 		  </ul>
     </div>
@@ -143,7 +146,7 @@ $(document).ready(function(){
 </div>
 
 
-<footer class="footer">
+<footer class="footer" style="/*background-color: #21252a;*/">
   <!--div class="container">
     <% content 'footer' %>
   </div-->

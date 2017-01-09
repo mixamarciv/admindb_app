@@ -31,6 +31,7 @@ func main() {
 	r.HandleFunc("/", LogReq(http_main))
 	r.HandleFunc("/main", LogReq(http_main))
 	r.HandleFunc("/s", LogReq(http_search))
+	r.HandleFunc("/login", LogReq(http_login))
 
 	//вывод
 	r.NotFoundHandler = MakeHttpHandler(LogReq(http_404))
@@ -67,7 +68,9 @@ func http_main(w http.ResponseWriter, r *http.Request) {
 }
 
 func http_404(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("404\npage not found\n\n\n"))
+	//w.Write([]byte("404\npage not found\n\n\n"))
+	d := map[string]interface{}{}
+	RenderTemplate(w, r, d, "maintemplate.html", "error404.html")
 }
 
 func user_check_access(w http.ResponseWriter, r *http.Request, d map[string]interface{}) error {

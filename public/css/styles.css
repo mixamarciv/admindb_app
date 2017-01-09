@@ -47,12 +47,13 @@ code  {
        /*.well;*/
          /*.well-sm;*/
 	white-space: pre;
+	
 	font-family: consolas, courier, monospace;
 	color:  #bfbfbf;
 	display: block;
 	float: left;
-	background-color: #233535; 
-	border: 1px solid #334545;
+	background-color: #151718; 
+	border: 1px solid #040404;
        /**
        float: left;
        font-size: 1em;
@@ -94,10 +95,12 @@ body {
 	position: absolute;
 	bottom: 0;
 	width: 100%;
+	
 	/* Set the fixed height of the footer here */
 	height: 60px;
-	background-color: #021313;
-	border: 0px solid #132525; 
-	border-top: 1px solid #132525;
+	background-color: #21252a /*22272b*/;  /*272b30*/
+	border: 0px solid #171b20; 
+	padding-top: 4px;
+	border-top: 1px solid #141414;
 }
 

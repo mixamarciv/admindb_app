@@ -40,7 +40,7 @@ func LogReq(f func(http.ResponseWriter, *http.Request)) func(http.ResponseWriter
 
 		if r.URL.RawQuery == "" { //проверяем что бы обязательно были заданы хотябы 1 параметр после ?
 			http.Redirect(w, r, "/?main", 301)
-			log.Print("## redirect to /?main ")
+			LogPrint("## redirect to /?main ")
 			return
 		}
 		//context.Set(r, "nextfunc", nextfunc)

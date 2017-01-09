@@ -1,0 +1,23 @@
+
+{{define "content"}}
+
+<div class="container">
+  <h1><big><big><big><big><big><b>404</b></big></big></big></big></big></h1>
+  <h2><big>not found</big></h2>
+  <br>
+  <h4><big>ссылка или страница которую вы пытаетесь открыть не существует (или ещё не создана или уже удалена)</big></h4>
+</div>
+
+
+
+
+<div class="container">
+	<br><br>
+	{{if .err }}
+	<br><br>
+	<code class="container"> {{.err}} </code>
+	{{end}}
+	
+	<code class="container"> {{dump_t}} </code>
+</div>
+{{end}}
