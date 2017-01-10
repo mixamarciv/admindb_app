@@ -13,7 +13,11 @@ var sess_store = sessions.NewCookieStore([]byte(gcfg_secret_cookie_key))
 
 func GetSess(w http.ResponseWriter, r *http.Request) *sessions.Session {
 	var sess *sessions.Session
-	sess, _ = sess_store.Get(r, gcfg_secret_cookie_name)
+	sess, err := sess_store.Get(r, gcfg_secret_cookie_name)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return nil
+	}
 	return sess
 }
 

@@ -8,50 +8,63 @@
 </div>
 {{end}}
 
+{{if .err }}
+<div class="container"><div class="alert alert-dismissible alert-danger">
+	  	<button type="button" class="close" data-dismiss="alert">&times;</button>
+	  	<strong>{{.err}}</strong>
+</div></div>
+{{end}}
+{{if .error }}
+<div class="container"><div class="alert alert-dismissible alert-danger">
+	  	<button type="button" class="close" data-dismiss="alert">&times;</button>
+	  	<strong>{{.error}}</strong>
+</div></div>
+{{end}}
 
 
-<div class="container"> 
-	{{.}}
-	
+
+<div class="container" style="display:none;"> 
+	{{.user_data}}
 	<form class="form-horizontal" method="POST" action="/login?f={{.get_vars.f}}">
 	  <fieldset>
-	
 	    <legend>Авторизация</legend>
-		
 		<input type="hidden" name="f">
-		
 	    <div class="form-group">
 	      <label for="inputEmail" class="col-lg-2 control-label">Email</label>
 	      <div class="col-lg-10">
 	        <input type="text" class="form-control" id="inputEmail" placeholder="Email" name="email">
 	      </div>
 	    </div>
-		
 	    <div class="form-group">
 	      <label for="inputPassword" class="col-lg-2 control-label">Password</label>
 	      <div class="col-lg-10">
 	        <input type="password" class="form-control" id="inputPassword" placeholder="Password" name="pass">
 	      </div>
 	    </div>
-	
 	    <div class="form-group">
 	      <div class="col-lg-10 col-lg-offset-2">
 	        <button type="submit" class="btn btn-primary">поехали</button>
 	      </div>
 	    </div>
-		
 	  </fieldset>
 	</form>
-	
 </div>
 
-{{if .err }}
-<div class="container"> 
-	<div class="alert alert-dismissible alert-danger">
-	  	<button type="button" class="close" data-dismiss="alert">&times;</button>
-	  	<strong>{{.err}}</strong>
-	</div>
+<div class="container" style="display:none0;"> 
+	{{.user_data}}
+	<a href="https://oauth.vk.com/authorize?client_id=5802778&scope=&redirect_uri=http://{{.http_request.host}}/auth_vk&response_type=code"
+	   class="btn btn-primary">
+	авторизация через вк
+	</a>
 </div>
+
+{{if .success }}
+<div class="container"><div class="alert alert-dismissible alert-success">
+	  	<button type="button" class="close" data-dismiss="alert">&times;</button>
+	  	<strong>{{.success}}</strong>
+</div></div>
 {{end}}
-	
+
+<code>{{.sess}}</code>
+
 {{end}}

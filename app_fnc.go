@@ -36,7 +36,7 @@ func SetCtx(r *http.Request, varname string, val interface{}) {
 func LogReq(f func(http.ResponseWriter, *http.Request)) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		context.Set(r, "startLoadTime", time.Now())
-		log.Print("<- " + r.URL.Scheme + " " + r.URL.Path)
+		log.Print("<- " + r.URL.Scheme + " " + r.URL.Path + "?" + r.URL.RawQuery)
 
 		if r.URL.RawQuery == "" { //проверяем что бы обязательно были заданы хотябы 1 параметр после ?
 			http.Redirect(w, r, "/?main", 301)
@@ -47,7 +47,7 @@ func LogReq(f func(http.ResponseWriter, *http.Request)) func(http.ResponseWriter
 
 		f(w, r)
 
-		log.Printf("-> "+r.URL.Scheme+" "+r.URL.Path+"  %v ", GetLoadTime(r))
+		log.Printf("-> "+r.URL.Scheme+" "+r.URL.Path+"?"+r.URL.RawQuery+"  %v ", GetLoadTime(r))
 		context.Clear(r)
 	}
 }

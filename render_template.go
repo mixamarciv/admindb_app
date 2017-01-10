@@ -9,7 +9,7 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	//mf "github.com/mixamarciv/gofncstd3000"
+	mf "github.com/mixamarciv/gofncstd3000"
 	//"reflect"
 
 	"github.com/gorilla/context"
@@ -54,10 +54,23 @@ func RenderTemplate(w http.ResponseWriter, r *http.Request, d map[string]interfa
 	//в d["sess"] сохраняем значения всех переменных сессии
 	if _, ok := d["sess"]; !ok {
 		//копируем значения всех переменных текущей сессии
+		//ещё и преобразуем их из json строки в map[string]interface{}
 		allsessvars := make(map[interface{}]interface{})
 		for k, v := range s.Values {
-			allsessvars[k] = v
+			str, ok := v.(string)
+			if ok {
+				t, err := mf.FromJson([]byte(str))
+				if err == nil {
+					allsessvars[k] = t
+				} else {
+					allsessvars[k] = str
+				}
+			} else {
+				allsessvars[k] = v
+			}
+
 		}
+
 		//и задаем значения для переменных по умолчанию (если они не заданы)
 		for k, v := range gcfg_default_session_data {
 			if _, b := allsessvars[k]; !b {
@@ -65,6 +78,7 @@ func RenderTemplate(w http.ResponseWriter, r *http.Request, d map[string]interfa
 			}
 		}
 		d["sess"] = allsessvars
+
 	}
 
 	//в d["ctx"] сохраняем значения всех переменных контекста

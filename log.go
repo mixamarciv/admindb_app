@@ -54,6 +54,15 @@ func LogPrintErrAndExit(info string, err error) {
 	WriteLogErrAndExit(info, err)
 }
 
+func LogPrintErr(info string, err error) {
+	if err == nil {
+		return
+	}
+	fmt.Println(info)
+	fmt.Printf("%+v", err)
+	WriteLogErr(info, err)
+}
+
 func LogPrintAndExit(info string) {
 	fmt.Println(info)
 	WriteLogln(info)

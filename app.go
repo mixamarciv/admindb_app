@@ -17,6 +17,7 @@ func init() {
 	InitApp()
 	InitLog()
 	InitDb()
+	InitAppCfg()
 	//InitSendMail()
 	InitMinify()
 }
@@ -32,13 +33,14 @@ func main() {
 	r.HandleFunc("/main", LogReq(http_main))
 	r.HandleFunc("/s", LogReq(http_search))
 	r.HandleFunc("/login", LogReq(http_login))
+	r.HandleFunc("/auth_vk", LogReq(http_auth_vk))
 
 	//вывод
 	r.NotFoundHandler = MakeHttpHandler(LogReq(http_404))
 
 	srv := &http.Server{
 		Handler:      r,
-		Addr:         "127.0.0.1:" + gcfg_webserver_port,
+		Addr:         ":" + gcfg_webserver_port,
 		WriteTimeout: 400 * time.Second,
 		ReadTimeout:  400 * time.Second,
 	}

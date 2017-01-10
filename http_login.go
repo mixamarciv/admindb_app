@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	//"fmt"
 	"net/http"
 	"net/url"
 )
@@ -20,12 +20,12 @@ func http_login(w http.ResponseWriter, r *http.Request) {
 	post_vars["pass"] = r.FormValue("pass")
 	d["post_vars"] = post_vars
 
-	_, ok := get_vars["d"]
-	if !ok {
-		d["err"] = fmt.Errorf("%s", "ОШИБКА db001: не верно указана БД")
-		RenderTemplate(w, r, d, "maintemplate.html", "login.html")
-		return
-	}
+	//_, ok := get_vars["d"]
+	//if !ok {
+	//  d["err"] = fmt.Errorf("%s", "ОШИБКА db001: не верно указана БД")
+	//  RenderTemplate(w, r, d, "maintemplate.html", "login.html")
+	//  return
+	//}
 
 	RenderTemplate(w, r, d, "maintemplate.html", "login.html")
 }
