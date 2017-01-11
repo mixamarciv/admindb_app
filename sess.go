@@ -7,6 +7,7 @@ import (
 
 	//"github.com/gorilla/mux"
 	"github.com/gorilla/sessions"
+	mf "github.com/mixamarciv/gofncstd3000"
 )
 
 var sess_store = sessions.NewCookieStore([]byte(gcfg_secret_cookie_key))
@@ -43,4 +44,23 @@ func GetSessVal(s *sessions.Session, name string, defval interface{}) interface{
 
 func SetSessVal(s *sessions.Session, name string, val interface{}) {
 	s.Values[name] = val
+}
+
+//выдает данные пользователя в формате json map[string]interface{}
+func GetSessUserData(w http.ResponseWriter, r *http.Request) map[string]interface{} {
+	sess := GetSess(w, r)
+	t, ok := sess.Values["user"]
+	if !ok {
+		return map[string]interface{}{"error": "no \"user\" data"}
+	}
+	str, ok := t.(string)
+	if !ok {
+		return map[string]interface{}{"error": "\"user\" data is not string"}
+	}
+
+	j, err := mf.FromJson([]byte(str))
+	if err != nil {
+		return map[string]interface{}{"error": "bad json string \"user\"! str:\"" + str + "\""}
+	}
+	return j
 }

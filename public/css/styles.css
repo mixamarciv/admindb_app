@@ -72,6 +72,13 @@ code  {
        **/
 }
 
+pre {
+	color:  #bfbfbf;
+	font-family: consolas, courier, monospace;
+	border: 1px solid #040404;
+	background-color: #151718;
+}
+
 codeclear {
     display:block;
     clear: both;

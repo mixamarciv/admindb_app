@@ -1,210 +1,256 @@
 
 {{define "content"}}
-<code class="container">
-  {{dump_t}}
-</code>
-{{if .err }}
-<code class="container"> {{.err}} </code>
+<script language='javascript'>
+
+$(document).ready(function(){
+	var f = $('#search_form3000');
+	
+	
+	$('#s_search_input3000').on('keyup',prepare_send_search_query3000);
+	/****
+	function(){
+		if(window.s_search_form.load){
+			window.s_search_form.wait = 1;
+			return
+		}
+		window.s_search_form.load = 1;
+		
+		$('#search_form_progress3000').animate({height:100},100)
+		setTimeout(function(){
+			if(window.s_search_form.wait)
+			window.s_search_form.load = 0;
+			$('#search_form_progress3000').animate({height:0},100)
+		},2000);
+	}
+	****/
+})
+
+window.s_search_form = {}
+function prepare_send_search_query3000(){
+	if(window.s_search_form.load){
+		window.s_search_form.wait = 1;
+		return
+	}
+	window.s_search_form.load = 1;
+	
+	$('#search_form_progress3000').animate({height:60,padding:0,"padding-right":100,"padding-left":50},100)
+	$('#search_form_progress_search_text').html('загрузка "'+$('#s_search_input3000').val()+'"')
+	//$('#s_search_input3000')
+	//var a = $('#s_search_input3000').position()
+	//alert( "left: " + a.left + ", top: " + a.top )
+	send_search_query3000(function(){
+		window.s_search_form.load = 0;
+		if(window.s_search_form.wait){
+			window.s_search_form.wait = 0;
+			return prepare_send_search_query3000()
+		}
+		$('#search_form_progress3000').animate({height:0,padding:0},100)
+	});
+}
+
+function send_search_query3000(fn){
+	setTimeout(function(){
+		fn()
+	},2000);	
+}
+</script>
+
+
+<style type="text/css">
+.s_search_input3000 {
+	font-weight: bold;
+}
+
+.s_search_pager3000 {
+	margin:1px;
+	padding:1px;
+	padding-bottom:10px;
+}
+
+#search_form_progress3000 {
+	position:absolute;
+	padding: 0px;
+	margin: 0px;
+	margin-right: 30px;
+	height:0px;
+	z-index:87;
+	overflow:hidden;
+	width:350px;
+	
+	border: 0px solid #070b10; /*#272b30*/
+	border-top: 0px;
+	background: rgba(39,43,48, 0.5);
+	border-radius: 0px 0px 15px 15px;
+}
+.search_form_progress3000_1 {
+	position:absolute;
+	left:0px;
+	top:0px;
+	right: 0px;
+	bottom: 0px;
+	
+	padding:7px;
+	padding-top:0px;
+	margin: 7px;
+	margin-top: 0px;
+	margin-right: 0px;
+
+	border: 0px solid #070b10; /*#272b30*/
+	border-top: 0px;
+	background: rgba(39,43,48, 0.7);
+	border-radius: 0px 0px 15px 15px;
+}
+.search_form_progress3000_2 {
+	position:absolute;
+	left:0px;
+	top:0px;
+	right: 0px;
+	bottom: 0px;
+	
+	padding:8px;
+	padding-top:0px;
+	margin: 8px;
+	margin-top: 0px;
+	margin-right: 0px;
+
+	border: 1px solid #070b10; /*#272b30*/
+	border-top: 0px;
+	background: rgba(39,43,48, 1);
+	border-radius: 0 0 5 5;
+}
+.search_form_progress3000_3 {
+	padding:0px;
+	margin:0px;
+	margin-bottom:5px;
+}
+</style>
+
+
+{{if .error }}
+<div class="container"><div class="alert alert-dismissible alert-danger">
+	  	<button type="button" class="close" data-dismiss="alert">&times;</button>
+	  	<strong>{{.error}}</strong>
+</div></div>
 {{end}}
 
-<code class="container"> {{.values}} </code>
 
-<code class="container" style="white-space: normal;"> {{.}} </code>
+{{if .db_access }}
+{{if eq .db_access "0" }}
+<center>
+	<a href="https://oauth.vk.com/authorize?client_id=5802778&scope=&redirect_uri=http://{{.http_request.host}}/auth_vk&response_type=code"
+	   class="btn btn-primary">
+		пройти тест
+	</a>
+</center>
+{{else}}
+<div class="form-group">
+  <div class="input-group" id="search_form3000">
+    <input type="text" class="form-control input-lg s_search_input3000" id="s_search_input3000">
+    <span class="input-group-btn">
+      <button class="btn btn-default input-lg" type="button"><big><big> &nbsp; поиск &nbsp; </big></big></button>
+    </span>
+  </div>
+  
+  <div id=search_form_progress3000>
+	<div class="search_form_progress3000_1">
+		<div class="search_form_progress3000_2">
+			<div class="search_form_progress3000_3">
+				<table border=0 style="background: rgba(0,0,0, 0);padding:0px;margin:0px;"><tr><td>
+				    <img src="/public/img/loading003_16x11.gif" style="padding:15px;marging:15px;">
+				</td><td>
+				    <span id="search_form_progress_search_text">загрузка</span>
+				</td></tr></table>
+			</div>
+		</div>	
+	</div>	
 
-<img src="/public/img/loading.gif">
-<style type="text/css">
+  </div>
 
-/*
-.container {width: 960px; margin: 0 auto; overflow: hidden;}
-.content {width:800px; margin:0 auto; padding-top:50px;}
-.contentBar {width:90px; margin:0 auto; padding-top:50px; padding-bottom:50px;}
-*/
-
-
-/* Second Loadin Circle */
-
-.circle {
-	background-color: rgba(0,0,0,0);
-	border:5px solid rgba(0,183,229,0.9);
-	opacity:.9;
-	border-right:5px solid rgba(0,0,0,0);
-	border-left:5px solid rgba(0,0,0,0);
-	border-radius:50px;
-	box-shadow: 0 0 35px #2187e7;
-	width:50px;
-	height:50px;
-	margin:0 auto;
-	top:0px;
-	-moz-animation:spinPulse 1s infinite ease-in-out;
-	-webkit-animation:spinPulse 1s infinite linear;
-}
-.circle1 {
-	background-color: rgba(0,0,0,0);
-	border:7px solid rgba(0,183,229,0.9);
-	opacity:.9;
-	border-left:5px solid rgba(0,0,0,0);
-	border-right:5px solid rgba(0,0,0,0);
-	border-radius:50px;
-	box-shadow: 0 0 8px #2187e7; 
-	width:32px;
-	height:32px;
-	margin:0 auto;
-	position:relative;
-	top:-40px;
-	-moz-animation:spinoffPulse 0.3s infinite linear;
-	-webkit-animation:spinoffPulse 0.3s infinite linear;
-}
-
-.circle2 {
-	background-color: rgba(0,0,0,0);
-	border:10px solid rgba(0,183,229,0.9);
-	opacity:.9;
-	border-left:5px solid rgba(0,0,0,0);
-	border-right:5px solid rgba(0,0,0,0);
-	border-radius:50px;
-	box-shadow: 0 0 20px #2187e7; 
-	width:12px;
-	height:12px;
-	margin:0 auto;
-	position:relative;
-	top:-65px;
-	-moz-animation:spinPulse 0.7s infinite linear;
-	-webkit-animation:spinPulse 0.7s infinite linear;
-}
-
-@-moz-keyframes spinPulse {
-	0% { -moz-transform:rotate(160deg); opacity:0; box-shadow:0 0 1px #2187e7;}
-	50% { -moz-transform:rotate(145deg); opacity:1; }
-	100% { -moz-transform:rotate(-320deg); opacity:0; }
-}
-@-webkit-keyframes spinPulse {
-	0% { -webkit-transform:rotate(160deg); opacity:0; box-shadow:0 0 1px #2187e7; }
-	50% { -webkit-transform:rotate(145deg); opacity:1;}
-	100% { -webkit-transform:rotate(-320deg); opacity:0; }
-}
-@-moz-keyframes spinoffPulse {
-	0% { -moz-transform:rotate(0deg); }
-	100% { -moz-transform:rotate(360deg);  }
-}
-@-webkit-keyframes spinoffPulse {
-	0% { -webkit-transform:rotate(0deg); }
-	100% { -webkit-transform:rotate(360deg); }
-}
-@-moz-keyframes spinoffPulseR {
-	0% { -moz-transform:rotate(360deg); }
-	100% { -moz-transform:rotate(0deg);  }
-}
-@-webkit-keyframes spinoffPulseR {
-	0% { -webkit-transform:rotate(360deg); }
-	100% { -webkit-transform:rotate(0deg); }
-}
-
-</style>
-
-<div style="width: 960px; margin: 0 auto; overflow: hidden;">
-	<div class="circle"></div>
-	<div class="circle1"></div>
-	<div class="circle2"></div>
 </div>
 
-	
-	
-<style type="text/css">
 
-/*
-.container {width: 960px; margin: 0 auto; overflow: hidden;}
-.content {width:800px; margin:0 auto; padding-top:50px;}
-.contentBar {width:90px; margin:0 auto; padding-top:50px; padding-bottom:50px;}
-*/
-
-
-/* Second Loadin Circle */
-
-.progressBar0 {
-	background-color: rgba(0,0,0,0);
-	border:5px solid rgba(0,183,229,0.9);
-	opacity:.9;
-	border-right:5px solid rgba(0,0,0,0);
-	border-left:5px solid rgba(0,0,0,0);
-	border-radius:50px;
-	box-shadow: 0 0 35px #2187e7;
-	width:50px;
-	height:50px;
-	margin:0 auto;
-	top:10px;
-	padding-top:20px;
-	margin-top:20px;
-	-moz-animation:progressBar0 1s infinite ease-in-out;
-	-webkit-animation:progressBar0 1s infinite linear;
-}
-.progressBar1 {
-	background-color: rgba(0,0,0,0);
-	border:15px solid rgba(0,183,229,0.9);
-	opacity:1;
-	border-left:15px solid rgba(0,0,0,0);
-	border-right:15px solid rgba(0,0,0,0);
-	border-radius:50px;
-	box-shadow: 0 0 8px #2187e7; 
-	width:32px;
-	height:32px;
-	margin:0 auto;
-	position:relative;
-	top:-40px;
-	-moz-animation:progressBar1 0.4s infinite linear;
-	-webkit-animation:progressBar1 0.4s infinite linear;
-}
-
-.progressBar2 {
-	background-color: rgba(0,0,0,0);
-	border:15px solid rgba(0,183,229,0.9);
-	opacity:1;
-	border-left:15px solid rgba(0,0,0,0);
-	border-right:15px solid rgba(0,0,0,0);
-	border-radius:50px;
-	box-shadow: 0 0 8px #2187e7; 
-	width:32px;
-	height:32px;
-	margin:0 auto;
-	position:relative;
-	top:-72px;
-	-moz-animation:progressBar2 0.3s infinite linear;
-	-webkit-animation:progressBar2 0.3s infinite linear;
-}
-
-@-moz-keyframes progressBar0 {
-	0% { -moz-transform:rotate(160deg); opacity:0; box-shadow:0 0 1px #2187e7;}
-	50% { -moz-transform:rotate(145deg); opacity:1; }
-	100% { -moz-transform:rotate(-320deg); opacity:0; }
-}
-@-webkit-keyframes progressBar0 {
-	0% { -webkit-transform:rotate(160deg); opacity:0; box-shadow:0 0 1px #2187e7; }
-	50% { -webkit-transform:rotate(145deg); opacity:1;}
-	100% { -webkit-transform:rotate(-320deg); opacity:0; }
-}
-@-moz-keyframes progressBar1 {
-	0% { -moz-transform:rotate(0deg); }
-	100% { -moz-transform:rotate(360deg);  }
-}
-@-webkit-keyframes progressBar1 {
-	0% { -webkit-transform:rotate(0deg); }
-	100% { -webkit-transform:rotate(360deg); }
-}
-@-moz-keyframes progressBar2 {
-	0% { -moz-transform:rotate(360deg); }
-	100% { -moz-transform:rotate(0deg);  }
-}
-@-webkit-keyframes progressBar2 {
-	0% { -webkit-transform:rotate(360deg); }
-	100% { -webkit-transform:rotate(0deg); }
-}
-
-</style>
-
-<div style="width: 960px; margin: 10px; paddind:10px; overflow: hidden;">
-	<div class="progressBar0"></div>
-	<div class="progressBar1"></div>
-	<div class="progressBar2"></div>
+<div class="list-group">
+  <a href="#" class="list-group-item">
+    <h4 class="list-group-item-heading">List group item heading</h4>
+    <p class="list-group-item-text">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
+  </a>
+  <a href="#" class="list-group-item">
+    <h4 class="list-group-item-heading">List group item heading</h4>
+    <p class="list-group-item-text">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
+  </a>
+  <a href="#" class="list-group-item">
+    <h4 class="list-group-item-heading">List group item heading</h4>
+    <p class="list-group-item-text">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
+  </a>
+  <a href="#" class="list-group-item">
+    <h4 class="list-group-item-heading">List group item heading</h4>
+    <p class="list-group-item-text">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
+  </a>
+  <a href="#" class="list-group-item">
+    <h4 class="list-group-item-heading">List group item heading</h4>
+    <p class="list-group-item-text">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
+  </a>
+  <a href="#" class="list-group-item">
+    <h4 class="list-group-item-heading">List group item heading</h4>
+    <p class="list-group-item-text">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
+  </a>
+  <a href="#" class="list-group-item">
+    <h4 class="list-group-item-heading">List group item heading</h4>
+    <p class="list-group-item-text">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
+  </a>
+  <a href="#" class="list-group-item">
+    <h4 class="list-group-item-heading">List group item heading</h4>
+    <p class="list-group-item-text">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
+  </a>
+  <a href="#" class="list-group-item">
+    <h4 class="list-group-item-heading">List group item heading</h4>
+    <p class="list-group-item-text">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
+  </a>
+  <a href="#" class="list-group-item">
+    <h4 class="list-group-item-heading">List group item heading</h4>
+    <p class="list-group-item-text">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
+  </a>
+  <a href="#" class="list-group-item">
+    <h4 class="list-group-item-heading">List group item heading</h4>
+    <p class="list-group-item-text">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
+  </a>
+  <a href="#" class="list-group-item">
+    <h4 class="list-group-item-heading">List group item heading</h4>
+    <p class="list-group-item-text">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
+  </a>
+  <a href="#" class="list-group-item">
+    <h4 class="list-group-item-heading">List group item heading</h4>
+    <p class="list-group-item-text">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
+  </a>
+  <a href="#" class="list-group-item">
+    <h4 class="list-group-item-heading">List group item heading</h4>
+    <p class="list-group-item-text">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
+  </a>
+  <a href="#" class="list-group-item">
+    <h4 class="list-group-item-heading">List group item heading</h4>
+    <p class="list-group-item-text">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
+  </a>
+  <a href="#" class="list-group-item">
+    <h4 class="list-group-item-heading">List group item heading</h4>
+    <p class="list-group-item-text">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
+  </a>
+  <a href="#" class="list-group-item">
+    <h4 class="list-group-item-heading">List group item heading</h4>
+    <p class="list-group-item-text">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
+  </a>
+  <a href="#" class="list-group-item">
+    <h4 class="list-group-item-heading">List group item heading</h4>
+    <p class="list-group-item-text">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
+  </a>
 </div>
 
-	
+
+<ul class="pager s_search_pager3000">
+  <li class="previous disabled"><a href="#">&nbsp; &larr; &nbsp; prev &nbsp;</a></li>
+  <li class="next"><a href="#">&nbsp;next &nbsp; &rarr; &nbsp;</a></li>
+</ul>
+
+{{end}}
+{{end}}
+
 {{end}}

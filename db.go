@@ -12,10 +12,11 @@ import (
 )
 
 type DBd struct {
-	Name     string
-	Path     string
-	DB       *sql.DB
-	NeedAuth bool
+	Name      string
+	ShortName string
+	Path      string
+	DB        *sql.DB
+	NeedAuth  bool
 }
 
 var dbmap map[string]*DBd
@@ -34,15 +35,16 @@ func (p *NullString) get(defaultval string) string {
 func InitDb() {
 	dbmap = make(map[string]*DBd)
 
-	dbmap["users"] = conn_to_db("users", apppath+"/db/DB_USERS.FDB", false)
-	dbmap["a"] = conn_to_db("admin", apppath+"/db/DB_ADMIN.FDB", false)
-	dbmap["p"] = conn_to_db("programming", apppath+"/db/DB_PROGRAMMING.FDB", false)
-	dbmap["w"] = conn_to_db("warez", apppath+"/db/DB_WAREZ.FDB", true)
+	dbmap["users"] = conn_to_db("users", "users", apppath+"/db/DB_USERS.FDB", false)
+	dbmap["a"] = conn_to_db("a", "admin", apppath+"/db/DB_ADMIN.FDB", false)
+	dbmap["p"] = conn_to_db("p", "programming", apppath+"/db/DB_PROGRAMMING.FDB", false)
+	dbmap["w"] = conn_to_db("w", "warez", apppath+"/db/DB_WAREZ.FDB", true)
 }
 
-func conn_to_db(name, path string, NeedAuth bool) *DBd {
+func conn_to_db(shortName, name, path string, NeedAuth bool) *DBd {
 	dbd := new(DBd)
 	dbd.Name = name
+	dbd.ShortName = shortName
 	dbd.Path = path
 	dbd.NeedAuth = NeedAuth
 	//path = "d/program/go/projects/test_martini_app/db/DB1.FDB"

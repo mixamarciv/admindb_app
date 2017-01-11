@@ -63,20 +63,31 @@ $(document).ready(function(){
         <span class="icon-bar"></span>
       </button>
       <a class="navbar-brand" href="/">
-			<big><big><big><big><ff2><!--Админ вРашке.net--> anyKeyАdmin.info </ff2> &nbsp;</big></big></big></big>	
+			<big><big><big><big><ff2><!--Админ вРашке.net--> anykeyАdmin.info </ff2> &nbsp;</big></big></big></big>	
 	  </a>
     </div>
 
     <div class="navbar-collapse collapse in" id="bs-example-navbar-collapse-1" aria-expanded="true">
 		  <ul class="nav navbar-nav">
-				  <!-- li><a><ff1>записи</ff1><b>:</b></a></li -->
-	              <li><a href="/s?d=a"><ff1>Администрирование</ff1></a></li>
-	              <li><a href="/s?d=p"><ff1>Программирование</ff1></a></li>
-	              <li><a href="/s?d=v"><ff1>Варез</ff1></a></li>
+				{{if .db }} 
+		            <li {{if eq .db.Name "admin" }} class="active" {{end}}><a href="/s?d=a"><ff1>Администрирование</ff1></a></li>
+		            <li {{if eq .db.Name "programming" }} class="active" {{end}}><a href="/s?d=p"><ff1>Программирование</ff1></a></li>
+		            <li {{if eq .db.Name "warez" }} class="active" {{end}}><a href="/s?d=v"><ff1>Варез</ff1></a></li>
+				{{else}}
+		            <li><a href="/s?d=a"><ff1>Администрирование</ff1></a></li>
+		            <li><a href="/s?d=p"><ff1>Программирование</ff1></a></li>
+		            <li><a href="/s?d=w"><ff1>Варез</ff1></a></li>
+				{{end}}
 	      </ul>
 		  <ul class="nav navbar-nav navbar-right">
-		      <li>
-					<a href="/login?pox"><b>Login</b></a>
+		      <li {{if eq .http_request.url.Path "/login" }} class="active" {{end}}>
+					<a href="/login?pox"><b>
+						{{if .sess.user.name }}
+							{{.sess.user.name}}
+						{{else}}
+							Login
+						{{end}}
+					</b></a>
 					<!--<ff2><big><big></big></big></ff2>
 	                <div class="col-md-8">
 	                <a 	href="{{.http_request.requestURI}}&ssesstyle={{if eq .sess.style "dark" }}white{{else}}dark{{end}}" class="btn" 

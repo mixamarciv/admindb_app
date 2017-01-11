@@ -13,18 +13,18 @@ func http_search(w http.ResponseWriter, r *http.Request) {
 
 	q, _ := url.ParseQuery(r.URL.RawQuery)
 	d["url_rawquery"] = r.URL.RawQuery
-	d["url_vars"] = q
+	d["get_vars"] = q
 
 	dtype, ok := q["d"]
 	if !ok {
-		d["err"] = fmt.Errorf("%s", "ОШИБКА http_search001: не верно указана БД")
+		d["error"] = fmt.Errorf("%s", "ОШИБКА http_search001: не верно указана БД")
 		RenderTemplate(w, r, d, "maintemplate.html", "search.html")
 		return
 	}
 
 	db, ok := dbmap[dtype[0]]
 	if !ok {
-		d["err"] = fmt.Errorf("%s", "ОШИБКА http_search002: не верно указана БД")
+		d["error"] = fmt.Errorf("%s", "ОШИБКА http_search002: не верно указана БД (возможно эта бд не существует)")
 		RenderTemplate(w, r, d, "maintemplate.html", "search.html")
 		return
 	}
@@ -39,7 +39,7 @@ func http_search(w http.ResponseWriter, r *http.Request) {
 			var Url *url.URL
 			Url, err := url.Parse("/login")
 			if err != nil {
-				d["err"] = fmt.Errorf("%s", "ОШИБКА http_search003: url.Parse")
+				d["error"] = fmt.Errorf("%s", "ОШИБКА http_search003: url.Parse")
 				RenderTemplate(w, r, d, "maintemplate.html", "search.html")
 				return
 			}
@@ -55,12 +55,13 @@ func http_search(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		if !hasaccess {
-			d["err_text"] = "ОШИБКА: у вас нет доступа к БД:\"" + d["db"].(DBd).Name + "\""
-			d["err"] = fmt.Errorf("%s", "ОШИБКА: нет доступа к БД")
+			d["error"] = "ОШИБКА: у вас пока нет доступа к БД \"" + d["db"].(*DBd).Name + "\", доступ выдается админом после прохождения теста"
 			RenderTemplate(w, r, d, "maintemplate.html", "search.html")
 			return
 		}
 
+	} else {
+		d["db_access"] = "1" //доступ по умолчанию к бд
 	}
 
 	http_search__load_data(w, r, d)
@@ -78,8 +79,33 @@ func http_search__load_data(w http.ResponseWriter, r *http.Request, d map[string
 //если аторизован но недостаточно прав то возвращаем ошибку (1,0)
 //если не авторизован то (0,0) //потом возможно редирект на http.Redirect(w, r, "/login?f="+d["url_rawquery"], 301)
 func check_user_access_to_db(w http.ResponseWriter, r *http.Request, d map[string]interface{}) (isauth bool, hasaccess bool) {
-	isauth = false
-	hasaccess = false
+	u := GetSessUserData(w, r)
+	if _, b := u["error"]; b {
+		isauth = false
+		hasaccess = false
+		return isauth, hasaccess
+	}
+
+	fdata := u["fdata"].(map[string]interface{})
+	accessdb := fdata["accessdb"].(map[string]interface{})
+
+	db := d["db"].(*DBd)
+	shortnamedb := db.ShortName
+
+	access, ok := accessdb[shortnamedb]
+	if !ok {
+		isauth = false
+		hasaccess = false
+		return isauth, hasaccess
+	}
+
+	d["db_access"] = access.(string)
+
+	if access.(string) == "0" {
+		isauth = true
+		hasaccess = false
+		return isauth, hasaccess
+	}
 
 	return isauth, hasaccess
 }
