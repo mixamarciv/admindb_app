@@ -4,6 +4,9 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"strconv"
+
+	//mf "github.com/mixamarciv/gofncstd3000"
 )
 
 //хендлер для /s
@@ -36,8 +39,7 @@ func http_search(w http.ResponseWriter, r *http.Request) {
 		if !isauth {
 			//отправляем на авторизацию
 
-			var Url *url.URL
-			Url, err := url.Parse("/login")
+			u, err := url.Parse("/login")
 			if err != nil {
 				d["error"] = fmt.Errorf("%s", "ОШИБКА http_search003: url.Parse")
 				RenderTemplate(w, r, d, "maintemplate.html", "search.html")
@@ -47,11 +49,11 @@ func http_search(w http.ResponseWriter, r *http.Request) {
 			parameters := url.Values{}
 			parameters.Add("f", "/"+r.URL.RawQuery)
 			parameters.Add("msg", "для доступа к этой БД требуется авторизация")
-			Url.RawQuery = parameters.Encode()
+			u.RawQuery = parameters.Encode()
 
-			LogPrint(fmt.Sprintf("URL: %s", Url.String()))
+			LogPrint(fmt.Sprintf("URL: %s", u.String()))
 
-			http.Redirect(w, r, Url.String(), 301)
+			http.Redirect(w, r, u.String(), 301)
 			return
 		}
 		if !hasaccess {
@@ -67,11 +69,6 @@ func http_search(w http.ResponseWriter, r *http.Request) {
 	http_search__load_data(w, r, d)
 
 	RenderTemplate(w, r, d, "maintemplate.html", "search.html")
-}
-
-//загрузка данных в d["data"] по заданным критериям из d["url_vars"]
-func http_search__load_data(w http.ResponseWriter, r *http.Request, d map[string]interface{}) {
-	return
 }
 
 //проверяет авторизован ли пользователь и имеет ли достаточно прав для доступа к бд d["db"]
@@ -108,4 +105,84 @@ func check_user_access_to_db(w http.ResponseWriter, r *http.Request, d map[strin
 	}
 
 	return isauth, hasaccess
+}
+
+func f_get_vars_int(get_vars url.Values, varname string, defaultval int) int {
+	vals, ok := get_vars[varname]
+	if !ok {
+		return defaultval
+	}
+	val, err := strconv.Atoi(vals[0])
+	if err != nil {
+		return defaultval
+	}
+	return val
+}
+
+//загрузка данных в d["data"] по заданным критериям из d["url_vars"]
+func http_search__load_data(w http.ResponseWriter, r *http.Request, d map[string]interface{}) {
+	data := make(map[string]interface{})
+	get_vars := d["get_vars"].(url.Values)
+
+	page := f_get_vars_int(get_vars, "p", 1)
+	data["page"] = page
+	data["has_next_page"] = 0
+
+	{ //задаем url_next_page и url_prev_page
+		turlstr := r.URL.Path + "?" + r.URL.RawQuery
+		u, err := url.Parse(turlstr)
+		if err != nil {
+			d["error"] = fmt.Errorf("%s", "http_search__load_data ERROR003: url.Parse("+turlstr+")")
+			return
+		}
+		q := u.Query()
+
+		q.Set("p", strconv.Itoa(page+1))
+		u.RawQuery = q.Encode()
+		data["url_next_page"] = u.String()
+
+		q.Set("p", strconv.Itoa(page-1))
+		u.RawQuery = q.Encode()
+		data["url_prev_page"] = u.String()
+	}
+
+	//получаем список записей по заданным критериям
+	str_first := strconv.Itoa(gcfg_cnt_posts_on_page + 1)
+	str_skip := strconv.Itoa(gcfg_cnt_posts_on_page * (page - 1))
+
+	query := "SELECT FIRST " + str_first + " SKIP " + str_skip + " p.name,p.tags,COALESCE(p.preview,LEFT(p.text,1200)),p.uuid_user,p.date_create,p.uuid FROM tpost p WHERE 1=1"
+	query += `ORDER BY p.date_create DESC`
+	db := d["db"].(*DBd).DB
+	rows, err := db.Query(query)
+	if err != nil {
+		d["error"] = fmtError("http_search__load_data ERROR001 db.Query(query): query:\n"+query+"\n\n", err)
+		return
+	}
+
+	data_rows := make([]map[string]string, 0)
+	cnt := 0
+	for rows.Next() {
+		var name, tags, preview, uuid_user, date_create, uuid NullString
+		if err := rows.Scan(&name, &tags, &preview, &uuid_user, &date_create, &uuid); err != nil {
+			d["error"] = fmtError("http_search__load_data ERROR002 rows.Scan: query:\n"+query+"\n\n", err)
+			return
+		}
+		cnt++
+		if cnt > gcfg_cnt_posts_on_page {
+			data["has_next_page"] = 1
+			break
+		}
+		dr := make(map[string]string)
+		dr["name"] = name.get_trcp1251("")
+		dr["tags"] = tags.get_trcp1251("")
+		dr["preview"] = preview.get_trcp1251("")
+		dr["uuid_user"] = uuid_user.get("")
+		dr["date_create"] = date_create.get("")
+		dr["uuid"] = uuid.get("")
+		data_rows = append(data_rows, dr)
+	}
+	rows.Close()
+	data["rows"] = data_rows
+	d["data"] = data
+	return
 }

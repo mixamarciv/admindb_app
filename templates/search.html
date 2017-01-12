@@ -27,6 +27,12 @@ $(document).ready(function(){
 
 window.s_search_form = {}
 function prepare_send_search_query3000(){
+	var search_text = $('#s_search_input3000').val()
+	search_text = search_text.trim()
+	if(window.s_search_form.cur_search_text==search_text){
+		return
+	}
+	
 	if(window.s_search_form.load){
 		window.s_search_form.wait = 1;
 		return
@@ -34,10 +40,14 @@ function prepare_send_search_query3000(){
 	window.s_search_form.load = 1;
 	
 	$('#search_form_progress3000').animate({height:60,padding:0,"padding-right":100,"padding-left":50},100)
-	$('#search_form_progress_search_text').html('загрузка "'+$('#s_search_input3000').val()+'"')
-	//$('#s_search_input3000')
-	//var a = $('#s_search_input3000').position()
-	//alert( "left: " + a.left + ", top: " + a.top )
+	
+	search_info = 'загрузка "'+search_text+'"'
+	if(search_text==''){
+		search_info = 'загрузка всех записей'
+	}
+	$('#search_form_progress_search_text').html(search_info)
+
+	window.s_search_form.cur_search_text = search_text
 	send_search_query3000(function(){
 		window.s_search_form.load = 0;
 		if(window.s_search_form.wait){
@@ -169,88 +179,34 @@ function send_search_query3000(fn){
 </div>
 
 
-<div class="list-group">
-  <a href="#" class="list-group-item">
-    <h4 class="list-group-item-heading">List group item heading</h4>
-    <p class="list-group-item-text">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
-  </a>
-  <a href="#" class="list-group-item">
-    <h4 class="list-group-item-heading">List group item heading</h4>
-    <p class="list-group-item-text">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
-  </a>
-  <a href="#" class="list-group-item">
-    <h4 class="list-group-item-heading">List group item heading</h4>
-    <p class="list-group-item-text">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
-  </a>
-  <a href="#" class="list-group-item">
-    <h4 class="list-group-item-heading">List group item heading</h4>
-    <p class="list-group-item-text">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
-  </a>
-  <a href="#" class="list-group-item">
-    <h4 class="list-group-item-heading">List group item heading</h4>
-    <p class="list-group-item-text">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
-  </a>
-  <a href="#" class="list-group-item">
-    <h4 class="list-group-item-heading">List group item heading</h4>
-    <p class="list-group-item-text">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
-  </a>
-  <a href="#" class="list-group-item">
-    <h4 class="list-group-item-heading">List group item heading</h4>
-    <p class="list-group-item-text">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
-  </a>
-  <a href="#" class="list-group-item">
-    <h4 class="list-group-item-heading">List group item heading</h4>
-    <p class="list-group-item-text">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
-  </a>
-  <a href="#" class="list-group-item">
-    <h4 class="list-group-item-heading">List group item heading</h4>
-    <p class="list-group-item-text">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
-  </a>
-  <a href="#" class="list-group-item">
-    <h4 class="list-group-item-heading">List group item heading</h4>
-    <p class="list-group-item-text">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
-  </a>
-  <a href="#" class="list-group-item">
-    <h4 class="list-group-item-heading">List group item heading</h4>
-    <p class="list-group-item-text">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
-  </a>
-  <a href="#" class="list-group-item">
-    <h4 class="list-group-item-heading">List group item heading</h4>
-    <p class="list-group-item-text">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
-  </a>
-  <a href="#" class="list-group-item">
-    <h4 class="list-group-item-heading">List group item heading</h4>
-    <p class="list-group-item-text">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
-  </a>
-  <a href="#" class="list-group-item">
-    <h4 class="list-group-item-heading">List group item heading</h4>
-    <p class="list-group-item-text">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
-  </a>
-  <a href="#" class="list-group-item">
-    <h4 class="list-group-item-heading">List group item heading</h4>
-    <p class="list-group-item-text">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
-  </a>
-  <a href="#" class="list-group-item">
-    <h4 class="list-group-item-heading">List group item heading</h4>
-    <p class="list-group-item-text">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
-  </a>
-  <a href="#" class="list-group-item">
-    <h4 class="list-group-item-heading">List group item heading</h4>
-    <p class="list-group-item-text">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
-  </a>
-  <a href="#" class="list-group-item">
-    <h4 class="list-group-item-heading">List group item heading</h4>
-    <p class="list-group-item-text">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
-  </a>
-</div>
+	{{if .data }}
+	<div class="list-group">
+	  {{range .data.rows}}
+	  <a href="#" class="list-group-item list-group-item-action">
+	   	<div class="list-group-item-heading">
+			<h4>
+			<div class="col-md-9">{{.name}}</div>
+			<div class="col-md-3"><small>{{.date_create}}</small></div>
+			</h4>
+		</div>
+		<div class="container"><div class="row"><div class="col-md-12" style="height:5px;"></div></div></div>
+		<div class="list-group-item-text container-fluid">
+		    <p>{{.preview}}</p>
+		    <small>{{.tags}}</small>
+		</div>
+	  </a>
+	  {{end}}
+	</div>
+	
+	
+	<ul class="pager s_search_pager3000">
+	  <li class="previous {{if le .data.page 1 }}disabled{{end}}"><a href="{{if le .data.page 1 }}#{{else}}{{.data.url_prev_page}}{{end}}">&nbsp; &larr; &nbsp; prev &nbsp;</a></li>
+	  <li class="next {{if eq .data.has_next_page 0 }}disabled{{end}}"><a href="{{if eq .data.has_next_page 0 }}#{{else}}{{.data.url_next_page}}{{end}}">&nbsp;next &nbsp; &rarr; &nbsp;</a></li>
+	</ul>
+	{{end}} <!-- data -->
 
 
-<ul class="pager s_search_pager3000">
-  <li class="previous disabled"><a href="#">&nbsp; &larr; &nbsp; prev &nbsp;</a></li>
-  <li class="next"><a href="#">&nbsp;next &nbsp; &rarr; &nbsp;</a></li>
-</ul>
-
-{{end}}
+{{end}} <!-- else eq .db_access "0" -->
 {{end}}
 
 {{end}}

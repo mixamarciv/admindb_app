@@ -8,7 +8,7 @@ import (
 
 	//s "strings"
 
-	//mf "github.com/mixamarciv/gofncstd3000"
+	mf "github.com/mixamarciv/gofncstd3000"
 )
 
 type DBd struct {
@@ -28,6 +28,13 @@ type NullString struct {
 func (p *NullString) get(defaultval string) string {
 	if p.Valid {
 		return p.String
+	}
+	return defaultval
+}
+
+func (p *NullString) get_trcp1251(defaultval string) string {
+	if p.Valid {
+		return mf.StrTr(p.String, "cp1251", "UTF-8")
 	}
 	return defaultval
 }

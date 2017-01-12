@@ -23,6 +23,7 @@ var gcfg_default_session_data = map[string]interface{}{"style": "dark"}
 
 //количество сообщений на одной странице
 var gcfg_cnt_messages_on_page = 8
+var gcfg_cnt_posts_on_page = 10
 
 var gcfg_app map[string]interface{}
 
