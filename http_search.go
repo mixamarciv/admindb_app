@@ -68,7 +68,7 @@ func http_search(w http.ResponseWriter, r *http.Request) {
 
 	http_search__load_data(w, r, d)
 
-	RenderTemplate(w, r, d, "maintemplate.html", "search.html")
+	RenderTemplate(w, r, d, "maintemplate.html", "search.html", "search_data.html")
 }
 
 //проверяет авторизован ли пользователь и имеет ли достаточно прав для доступа к бд d["db"]
@@ -107,24 +107,12 @@ func check_user_access_to_db(w http.ResponseWriter, r *http.Request, d map[strin
 	return isauth, hasaccess
 }
 
-func f_get_vars_int(get_vars url.Values, varname string, defaultval int) int {
-	vals, ok := get_vars[varname]
-	if !ok {
-		return defaultval
-	}
-	val, err := strconv.Atoi(vals[0])
-	if err != nil {
-		return defaultval
-	}
-	return val
-}
-
 //загрузка данных в d["data"] по заданным критериям из d["url_vars"]
 func http_search__load_data(w http.ResponseWriter, r *http.Request, d map[string]interface{}) {
 	data := make(map[string]interface{})
 	get_vars := d["get_vars"].(url.Values)
 
-	page := f_get_vars_int(get_vars, "p", 1)
+	page := http_get_var_int(get_vars, "p", 1)
 	data["page"] = page
 	data["has_next_page"] = 0
 
@@ -150,8 +138,10 @@ func http_search__load_data(w http.ResponseWriter, r *http.Request, d map[string
 	str_first := strconv.Itoa(gcfg_cnt_posts_on_page + 1)
 	str_skip := strconv.Itoa(gcfg_cnt_posts_on_page * (page - 1))
 
-	query := "SELECT FIRST " + str_first + " SKIP " + str_skip + " p.name,p.tags,COALESCE(p.preview,LEFT(p.text,1200)),p.uuid_user,p.date_create,p.uuid FROM tpost p WHERE 1=1"
-	query += `ORDER BY p.date_create DESC`
+	query := "SELECT FIRST " + str_first + " SKIP " + str_skip + " "
+	query += `  p.name,p.tags,COALESCE(p.preview,LEFT(p.text,1200)),p.uuid_user,LEFT(p.date_create,16),p.uuid FROM tpost p WHERE 1=1
+				ORDER BY p.date_create DESC
+			`
 	db := d["db"].(*DBd).DB
 	rows, err := db.Query(query)
 	if err != nil {

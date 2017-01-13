@@ -1,0 +1,30 @@
+
+{{define "search_data"}}
+	{{if .data }}
+	<div class="list-group">
+	  {{range .data.rows}}
+	  <a href="#" class="list-group-item list-group-item-action list-group-item-3000">
+		<h4 class="list-group-item-heading">
+			<div class="col-md-9">{{.name}}</div>
+			<div class="col-md-3"><small>{{.date_create}}</small></div>
+		</h4>
+	   	<div class="list-group-item-heading"></div>
+		
+		<div class="container"><div class="row"><div class="col-md-12" style="height:5px;"></div></div></div>
+		
+		<div class="list-group-item-text container-fluid">
+		    <p>{{.preview}}</p>
+		    <div class="container"><right><small>{{.tags}}</small></right></div>
+		</div>
+		
+	  </a>
+	  {{end}}
+	</div>
+	
+	
+	<ul class="pager s_search_pager3000">
+	  <li class="previous {{if le .data.page 1 }}disabled{{end}}"><a href="{{if le .data.page 1 }}#{{else}}{{.data.url_prev_page}}{{end}}">&nbsp; &larr; &nbsp; prev &nbsp;</a></li>
+	  <li class="next {{if eq .data.has_next_page 0 }}disabled{{end}}"><a href="{{if eq .data.has_next_page 0 }}#{{else}}{{.data.url_next_page}}{{end}}">&nbsp;next &nbsp; &rarr; &nbsp;</a></li>
+	</ul>
+	{{end}} <!-- data -->
+{{end}} <!-- define "search_data" -->

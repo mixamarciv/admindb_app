@@ -32,6 +32,8 @@ func main() {
 	r.HandleFunc("/", LogReq(http_main))
 	r.HandleFunc("/main", LogReq(http_main))
 	r.HandleFunc("/s", LogReq(http_search))
+	r.HandleFunc("/p", LogReq(http_post_view))
+
 	r.HandleFunc("/login", LogReq(http_login))
 	r.HandleFunc("/auth_vk", LogReq(http_auth_vk))
 
