@@ -88,7 +88,7 @@ func http_get_var_int(get_vars url.Values, varname string, defaultval int) int {
 	}
 	return val
 }
-func http_get_var_str(get_vars url.Values, varname string, defaultval int) int {
+func http_get_var_str(get_vars url.Values, varname string, defaultval string) string {
 	vals, ok := get_vars[varname]
 	if !ok {
 		return defaultval
