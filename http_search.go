@@ -11,6 +11,28 @@ import (
 
 //хендлер для /s
 func http_search(w http.ResponseWriter, r *http.Request) {
+	d := http_parse_url(w, r)
+
+	http_parse_url__get_db(w, r, d)
+	if d["error"] != nil {
+		RenderError(w, r, d)
+		return
+	}
+
+	if d["db_access"].(string) < "1" {
+		d["error"] = fmt.Errorf("%s", "у вас нет доступа к БД \""+d["db"].(*DBd).Name+"\"")
+		d["errorcode"] = "dbnoaccess"
+		RenderError(w, r, d)
+		return
+	}
+
+	http_search__load_data(w, r, d)
+
+	RenderTemplate(w, r, d, "maintemplate.html", "search.html", "search_data.html")
+}
+
+//хендлер для /s
+func http_search_old(w http.ResponseWriter, r *http.Request) {
 	d := map[string]interface{}{}
 	LogPrint("http_search start")
 

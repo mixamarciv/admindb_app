@@ -1,6 +1,17 @@
 
 {{define "content"}}
 
+<style>
+.post_text {
+	word-wrap: break-word;
+	white-space: pre-wrap;       /* css-3 */
+	word-wrap: break-word;       /* Internet Explorer 5.5+ */
+}
+
+.debug3000 {
+	font-family: Lucida Console,Lucida Sans Typewriter,monaco,Bitstream Vera Sans Mono,monospace;
+}
+</style>
 
 
 {{if .err }}
@@ -17,9 +28,8 @@
 {{end}}
 
 
-<div class="container"> <br> <br> <br> </div>
-<code class="container">
-  {{dump_t}}
-</code>
+<div class="row"><div class="col-md-12 post_text debug3000">
+{{dump_spew2 . 2 "\t"}}
+</div></div>
 	
 {{end}}

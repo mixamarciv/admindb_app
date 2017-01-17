@@ -31,8 +31,11 @@ func main() {
 	//r.HandleFunc("/main", http_sess_handler)
 	r.HandleFunc("/", LogReq(http_main))
 	r.HandleFunc("/main", LogReq(http_main))
+
 	r.HandleFunc("/s", LogReq(http_search))
 	r.HandleFunc("/p", LogReq(http_post_view))
+	r.HandleFunc("/e", LogReq(http_post_edit))
+	r.HandleFunc("/e_ajax", LogReq(http_post_edit_ajax))
 
 	r.HandleFunc("/login", LogReq(http_login))
 	r.HandleFunc("/logout", LogReq(http_logout))

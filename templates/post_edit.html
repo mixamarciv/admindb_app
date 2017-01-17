@@ -1,0 +1,76 @@
+
+{{define "content"}}
+<style>
+.post_text {
+	word-wrap: break-word;
+	white-space: pre-wrap;       /* css-3 */
+	word-wrap: break-word;       /* Internet Explorer 5.5+ */
+	font-family: Lucida Console,Lucida Sans Typewriter,monaco,Bitstream Vera Sans Mono,monospace;
+}
+.post_text>code {
+	display:block;
+    content: " ";
+    clear: both;
+	float: none;
+    display: table;
+	padding: 5px;
+}
+</style>
+
+
+
+{{if .error }}
+<div class="container"><div class="alert alert-dismissible alert-danger">
+	  	<button type="button" class="close" data-dismiss="alert">&times;</button>
+	  	<strong>{{.error}}</strong>
+</div></div>
+{{end}}
+
+<!-- -------------------------------------------------------------------------------------------------- -->
+<form method="POST" action="#" class="form-horizontal" id="edit_form3000">
+
+	<div class="form-group">
+		<div class="col-md-9">
+		    <h1><a href="/p?d={{.db.ShortName}}&id={{.data.uuid}}">{{.data.name}}</a></h1>
+		</div>
+		<div class="col-md-3">
+		    <small>db: <a href="/s?d={{.db.ShortName}}"><b>{{.db.Name}}</b></a></small>
+		</div>
+	</div>
+		
+	<div class="form-group">
+	    <label for="name">название:</label>
+	    <input class="form-control" id="post_name" placeholder="введите название" type="text" name="name" value="{{.data.name}}">
+	</div>
+	<div class="form-group">
+		<label for="preview">превью:</label>
+	    <textarea class="form-control" rows="3" placeholder="введите превью текста (он будет отображаться в списке при поиске)" name="preview">{{.data.preview}}</textarea>
+	</div>
+	<div class="form-group">
+		<label for="text">текст:</label>
+	    <textarea class="form-control" rows="8" placeholder="введите текст" name="text">{{.data.text}}</textarea>
+	</div>
+	<div class="form-group">
+		<label for="tags">теги:</label>
+	    <textarea class="form-control" rows="2" placeholder="теги поста (ключевые слова по которым его будет не сложно найти)" name="tags">{{.data.tags}}</textarea>
+	</div>
+	
+	<div class="form-group">
+	    <label for="post_save">перед сохранением проверьте введенные данные</label>
+	    <div class="row">
+		
+		<div class="col-md-6"><input type="submit" name="post_save" id="post_save" value="сохранить" class="btn btn-lg btn-default btn-block"></div>
+		<div class="col-md-4"></div>
+		<div class="col-md-2"><input type="submit" name="post_delete" id="post_delete" value="удалить" class="btn btn-lg btn-default btn-block"></div>
+	    </div>
+	    
+	</div>
+</form>
+
+<!-- -------------------------------------------------------------------------------------------------- -->
+
+
+
+
+
+{{end}}

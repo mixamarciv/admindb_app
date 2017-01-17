@@ -15,6 +15,12 @@ func RenderError(w http.ResponseWriter, r *http.Request, d map[string]interface{
 	return
 }
 
+//возвращает json строку-ответ
+func RenderJson(w http.ResponseWriter, r *http.Request, d map[string]interface{}) {
+	RenderTemplate(w, r, d, "maintemplate.html", "error_info_page.html")
+	return
+}
+
 //первоначальный парсинг данных урл
 func http_parse_url(w http.ResponseWriter, r *http.Request) map[string]interface{} {
 	d := make(map[string]interface{})
@@ -50,12 +56,16 @@ func http_parse_url__get_db(w http.ResponseWriter, r *http.Request, d map[string
 	}
 	d["db"] = db
 
-	if db.NeedAuth {
+	{ //парсим данные сессии юзера и ставим права доступа к бд
 		u := GetSessUserData(w, r)
 		d["user"] = u
 		if _, b := u["error"]; b {
-			d["error"] = u["error"]
-			d["errorcode"] = "noauth"
+			if db.NeedAuth {
+				d["error"] = u["error"]
+				d["errorcode"] = "noauth"
+			} else {
+				d["db_access"] = "1" //ставим доступ на чтение по умолчанию к бд к которой не нужна авторизация
+			}
 			return
 		}
 
@@ -77,10 +87,7 @@ func http_parse_url__get_db(w http.ResponseWriter, r *http.Request, d map[string
 			d["errorcode"] = "dbnoaccess"
 			return
 		}
-	} else {
-		d["db_access"] = "1" //доступ по умолчанию к бд к которой не нужна авторизация
 	}
-
 	return
 }
 

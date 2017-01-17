@@ -14,6 +14,8 @@ import (
 	"strings"
 
 	"github.com/gorilla/context"
+
+	"github.com/davecgh/go-spew/spew"
 )
 
 func init() {
@@ -49,7 +51,31 @@ func RenderTemplate(w http.ResponseWriter, r *http.Request, d map[string]interfa
 			return fmt.Sprintf("%#v", r.URL)
 			//return html.EscapeString(fmt.Sprintf("%#v", r.URL))
 		},
+		"dump_spew": func(v interface{}) string {
+			return spew.Sdump(v)
+		},
+		"dump_spew2": func(v interface{}, depth int, indent string) string {
+			cs := &spew.ConfigState{
+				Indent:                  indent,
+				MaxDepth:                depth,
+				SortKeys:                true,
+				DisableMethods:          true,
+				DisableCapacities:       true,
+				DisablePointerAddresses: true,
+				DisablePointerMethods:   true,
+				SpewKeys:                true,
+			}
+			//return cs.Sprintf("%#v", v)
+			return cs.Sdump(v)
+		},
 		"unsafeHtml": func(s string) template.HTML {
+			return template.HTML(s)
+		},
+		"unsafeHtmlPostPreview": func(s string) template.HTML {
+			i := strings.Index(s, "<code>")
+			if i >= 0 {
+				s = s[:i]
+			}
 			return template.HTML(s)
 		},
 		"unsafeHtmlPost": func(s string) template.HTML {
