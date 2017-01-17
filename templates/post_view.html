@@ -1,145 +1,21 @@
 
 {{define "content"}}
-<script language='javascript'>
-
-$(document).ready(function(){
-	var f = $('#search_form3000');
-	
-	
-	$('#s_search_input3000').on('keyup',prepare_send_search_query3000);
-	/****
-	function(){
-		if(window.s_search_form.load){
-			window.s_search_form.wait = 1;
-			return
-		}
-		window.s_search_form.load = 1;
-		
-		$('#search_form_progress3000').animate({height:100},100)
-		setTimeout(function(){
-			if(window.s_search_form.wait)
-			window.s_search_form.load = 0;
-			$('#search_form_progress3000').animate({height:0},100)
-		},2000);
-	}
-	****/
-})
-
-window.s_search_form = {}
-function prepare_send_search_query3000(){
-	var search_text = $('#s_search_input3000').val()
-	search_text = search_text.trim()
-	if(window.s_search_form.cur_search_text==search_text){
-		return
-	}
-	
-	if(window.s_search_form.load){
-		window.s_search_form.wait = 1;
-		return
-	}
-	window.s_search_form.load = 1;
-	
-	$('#search_form_progress3000').animate({height:60,padding:0,"padding-right":100,"padding-left":50},100)
-	
-	search_info = 'загрузка "'+search_text+'"'
-	if(search_text==''){
-		search_info = 'загрузка всех записей'
-	}
-	$('#search_form_progress_search_text').html(search_info)
-
-	window.s_search_form.cur_search_text = search_text
-	send_search_query3000(function(){
-		window.s_search_form.load = 0;
-		if(window.s_search_form.wait){
-			window.s_search_form.wait = 0;
-			return prepare_send_search_query3000()
-		}
-		$('#search_form_progress3000').animate({height:0,padding:0},100)
-	});
+<style>
+.post_text {
+	word-wrap: break-word;
+	white-space: pre-wrap;       /* css-3 */
+	word-wrap: break-word;       /* Internet Explorer 5.5+ */
 }
-
-function send_search_query3000(fn){
-	setTimeout(function(){
-		fn()
-	},2000);	
+.post_text>code {
+	display:block;
+    content: " ";
+    clear: both;
+	float: none;
+    display: table;
+	padding: 5px;
 }
-</script>
-
-
-<style type="text/css">
-.s_search_input3000 {
-	font-weight: bold;
-}
-
-.s_search_pager3000 {
-	margin:1px;
-	padding:1px;
-	padding-bottom:10px;
-}
-
-#search_form_progress3000 {
-	position:absolute;
-	padding: 0px;
-	margin: 0px;
-	margin-right: 30px;
-	height:0px;
-	z-index:87;
-	overflow:hidden;
-	width:350px;
-	
-	border: 0px solid #070b10; /*#272b30*/
-	border-top: 0px;
-	background: rgba(39,43,48, 0.5);
-	border-radius: 0px 0px 15px 15px;
-}
-.search_form_progress3000_1 {
-	position:absolute;
-	left:0px;
-	top:0px;
-	right: 0px;
-	bottom: 0px;
-	
-	padding:7px;
-	padding-top:0px;
-	margin: 7px;
-	margin-top: 0px;
-	margin-right: 0px;
-
-	border: 0px solid #070b10; /*#272b30*/
-	border-top: 0px;
-	background: rgba(39,43,48, 0.7);
-	border-radius: 0px 0px 15px 15px;
-}
-.search_form_progress3000_2 {
-	position:absolute;
-	left:0px;
-	top:0px;
-	right: 0px;
-	bottom: 0px;
-	
-	padding:8px;
-	padding-top:0px;
-	margin: 8px;
-	margin-top: 0px;
-	margin-right: 0px;
-
-	border: 1px solid #070b10; /*#272b30*/
-	border-top: 0px;
-	background: rgba(39,43,48, 1);
-	border-radius: 0 0 5 5;
-}
-.search_form_progress3000_3 {
-	padding:0px;
-	margin:0px;
-	margin-bottom:5px;
-}
-
-.list-group-item-3000 {
-	padding-left: 2px;
-	padding-right: 2px;
-}
-
 </style>
+
 
 
 {{if .error }}
@@ -150,8 +26,7 @@ function send_search_query3000(fn){
 {{end}}
 
 
-{{if .db_access }}
-{{if eq .db_access "0" }}
+{{if and (.db_access) (eq .db_access "0") }}
 <center>
 	<a href="https://oauth.vk.com/authorize?client_id=5802778&scope=&redirect_uri=http://{{.http_request.host}}/auth_vk&response_type=code"
 	   class="btn btn-primary">
@@ -159,36 +34,45 @@ function send_search_query3000(fn){
 	</a>
 </center>
 {{else}}
-<div class="form-group">
-  <div class="input-group" id="search_form3000">
-    <input type="text" class="form-control input-lg s_search_input3000" id="s_search_input3000">
-    <span class="input-group-btn">
-      <button class="btn btn-default input-lg" type="button"><big><big> &nbsp; поиск &nbsp; </big></big></button>
-    </span>
-  </div>
-  
-  <div id=search_form_progress3000>
-	<div class="search_form_progress3000_1">
-		<div class="search_form_progress3000_2">
-			<div class="search_form_progress3000_3">
-				<table border=0 style="background: rgba(0,0,0, 0);padding:0px;margin:0px;"><tr><td>
-				    <img src="/public/img/loading003_16x11.gif" style="padding:15px;marging:15px;">
-				</td><td>
-				    <span id="search_form_progress_search_text">загрузка</span>
-				</td></tr></table>
-			</div>
-		</div>	
-	</div>	
 
-  </div>
 
+<div class="row">
+	<div class="col-md-9">
+	    <h1><a href="/p?d={{.db.ShortName}}&id={{.data.uuid}}">{{.data.name}}</a></h1>
+	</div>
+	<div class="col-md-3">
+	    <small>db: <a href="/s?d={{.db.ShortName}}"><b>{{.db.Name}}</b></a></small>
+		{{if not (eq .db_access "0") }}
+			<br><a href="/e?d={{.db.ShortName}}&id={{.data.uuid}}" 
+					data-toggle="tooltip" data-placement="bottom" title="редактировать" data-original-title="редактировать" 
+					class="btn btn-primary btn"> 
+				редактировать 
+				</a>
+		{{end}}
+	</div>
 </div>
 
-<div id=search_form_data3000>
-	{{block "search_data" .}} Default search_data {{end}} 
-</div>
+<div class="row"><div class="col-md-12 post_text">
+{{unsafeHtmlPost .data.text}}
+</div></div>
 
-{{end}} <!-- else eq .db_access "0" -->
-{{end}}
+
+<div class="row"><div class="col-md-12 post_text">
+{{.data.text_html}}
+</div></div>
+
+<div class="row"><div class="col-md-12 post_tags">
+<div class="panel panel-default"><div class="panel-body">
+{{.data.tags}}
+</div></div>
+</div></div>
+
+
+
+
+
+{{end}} <!-- (.db_access) (eq .db_access "0") -->
+
+
 
 {{end}}

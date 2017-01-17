@@ -7,17 +7,16 @@
 	<p>{{.msg}}</p>
 </div>
 {{end}}
-
 {{if .err }}
 <div class="container"><div class="alert alert-dismissible alert-danger">
-	  	<button type="button" class="close" data-dismiss="alert">&times;</button>
-	  	<strong>{{.err}}</strong>
+	<button type="button" class="close" data-dismiss="alert">&times;</button>
+	<strong>{{.err}}</strong>
 </div></div>
 {{end}}
 {{if .error }}
 <div class="container"><div class="alert alert-dismissible alert-danger">
-	  	<button type="button" class="close" data-dismiss="alert">&times;</button>
-	  	<strong>{{.error}}</strong>
+	<button type="button" class="close" data-dismiss="alert">&times;</button>
+	<strong>{{.error}}</strong>
 </div></div>
 {{end}}
 
@@ -51,10 +50,14 @@
 </div>
 
 <div class="container" style="display:none0;"> 
-	{{.user_data}}
 	<a href="https://oauth.vk.com/authorize?client_id=5802778&scope=&redirect_uri=http://{{.http_request.host}}/auth_vk&response_type=code"
 	   class="btn btn-primary">
-	авторизация через вк
+	{{if .sess.user}}повторная{{end}} авторизация через вк
+	</a>
+	
+	<a href="/logout?1"
+	   class="btn btn-primary">
+	выход
 	</a>
 </div>
 

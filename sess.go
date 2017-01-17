@@ -57,10 +57,22 @@ func GetSessUserData(w http.ResponseWriter, r *http.Request) map[string]interfac
 	if !ok {
 		return map[string]interface{}{"error": "\"user\" data is not string"}
 	}
-
+	if str == "" {
+		return map[string]interface{}{"error": "no \"user\" data(user is logout)"}
+	}
 	j, err := mf.FromJson([]byte(str))
 	if err != nil {
 		return map[string]interface{}{"error": "bad json string \"user\"! str:\"" + str + "\""}
 	}
 	return j
+}
+
+func SetSessUserData(w http.ResponseWriter, r *http.Request, jsonStr string) {
+	sess := GetSess(w, r)
+	if jsonStr == "" {
+		delete(sess.Values, "user")
+	} else {
+		sess.Values["user"] = jsonStr
+	}
+	sess.Save(r, w)
 }

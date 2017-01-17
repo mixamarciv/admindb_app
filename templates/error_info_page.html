@@ -1,0 +1,25 @@
+
+{{define "content"}}
+
+
+
+{{if .err }}
+<code class="container"> {{.err}} </code>
+{{end}}
+
+
+{{if .errorcode }}
+<h1 class="container">ERROR: <b>{{.errorcode}}</b> </h1>
+{{end}}
+
+{{if .error }}
+<code class="container"> {{.error}} </code>
+{{end}}
+
+
+<div class="container"> <br> <br> <br> </div>
+<code class="container">
+  {{dump_t}}
+</code>
+	
+{{end}}

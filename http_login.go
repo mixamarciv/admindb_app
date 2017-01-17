@@ -29,3 +29,11 @@ func http_login(w http.ResponseWriter, r *http.Request) {
 
 	RenderTemplate(w, r, d, "maintemplate.html", "login.html")
 }
+
+func http_logout(w http.ResponseWriter, r *http.Request) {
+	d := map[string]interface{}{}
+	d["logout"] = 1
+	SetSessUserData(w, r, "")
+
+	RenderTemplate(w, r, d, "maintemplate.html", "login.html")
+}

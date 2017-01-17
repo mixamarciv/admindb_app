@@ -11,6 +11,7 @@ import (
 
 	mf "github.com/mixamarciv/gofncstd3000"
 	//"reflect"
+	"strings"
 
 	"github.com/gorilla/context"
 )
@@ -47,6 +48,19 @@ func RenderTemplate(w http.ResponseWriter, r *http.Request, d map[string]interfa
 		"dump_t": func() string {
 			return fmt.Sprintf("%#v", r.URL)
 			//return html.EscapeString(fmt.Sprintf("%#v", r.URL))
+		},
+		"unsafeHtml": func(s string) template.HTML {
+			return template.HTML(s)
+		},
+		"unsafeHtmlPost": func(s string) template.HTML {
+			i := strings.Index(s, "</code>")
+			if i >= 0 {
+				//LogPrint("--1-------------------------------------------------------\n" + s + "\n----------------------------------------------------------\n")
+				s = mf.StrRegexpReplace(s, "<code>[ \t]*\n", "<code>")
+				s = mf.StrRegexpReplace(s, "</code>[ \t]*\n", "</code>")
+				//LogPrint("--2-------------------------------------------------------\n" + s + "\n----------------------------------------------------------\n")
+			}
+			return template.HTML(s)
 		},
 	}
 
@@ -130,23 +144,6 @@ func RenderTemplate(w http.ResponseWriter, r *http.Request, d map[string]interfa
 		}
 
 	}
-
-	/**************
-	//fmt.Println(mf.CurTimeStrShort()+" template_file: ", template_file)
-
-	template_text, err := mf.FileReadStr(template_file)
-	if err != nil {
-		ShowError("read template file error", err, w, r)
-		return
-	}
-
-	//t, err := template.New("pox").Parse(template_text)
-	t, err := template.ParseFiles(template_text)
-	if err != nil {
-		ShowError("parse template error", err, w, r)
-		return
-	}
-	**************/
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 

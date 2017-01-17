@@ -10,7 +10,7 @@
 @SET db_file_path=%~dp0
 @SET path_prefix=temp_path_for_create_db
 
-@SET dbfilename=db1.fdb
+@SET dbfilename=DB_ADMIN.fdb
 
 @cd %db_file_path%
 

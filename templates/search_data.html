@@ -1,9 +1,10 @@
 
 {{define "search_data"}}
+	{{$dbtype := .db.ShortName}}
 	{{if .data }}
 	<div class="list-group">
 	  {{range .data.rows}}
-	  <a href="#" class="list-group-item list-group-item-action list-group-item-3000">
+	  <a href="/p?d={{$dbtype}}&id={{.uuid}}" class="list-group-item list-group-item-action list-group-item-3000">
 		<h4 class="list-group-item-heading">
 			<div class="col-md-9">{{.name}}</div>
 			<div class="col-md-3"><small>{{.date_create}}</small></div>

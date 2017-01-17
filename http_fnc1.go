@@ -25,6 +25,14 @@ func http_parse_url(w http.ResponseWriter, r *http.Request) map[string]interface
 }
 
 //получаем данные бд и права доступа пользователя к этой бд
+//должны быть заданы d["get_vars"]
+//в случае успеха задает значения для:
+//  d["db_access"]  - тип доступа(строка) "0","1"
+//  d["db"]         - база данных
+//  d["user"]       - данные авторизованного пользователя
+//в случае ошибки задает
+//  d["error"]
+//  d["errorcode"]
 func http_parse_url__get_db(w http.ResponseWriter, r *http.Request, d map[string]interface{}) {
 	q := d["get_vars"].(url.Values)
 	dtype, ok := q["d"]

@@ -39,6 +39,28 @@ func (p *NullString) get_trcp1251(defaultval string) string {
 	return defaultval
 }
 
+func (p *NullString) get_trcp1251_long(defaultval string) string {
+	if p.Valid {
+		return string(StrTr2([]byte(p.String), "cp1251", "UTF-8"))
+	}
+	return defaultval
+}
+
+func StrTr2(s []byte, from string, to string) []byte {
+	cnt := 200
+	cntlen := len(s) % cnt
+	var s2 []byte
+	for i := 0; i < len(s)-cntlen; i += cnt {
+		t := string(s[i : i+cnt])
+		t = mf.StrTr(t, from, to)
+		s2 = append(s2, []byte(t)...)
+	}
+	t := string(s[len(s)-cntlen : len(s)])
+	t = mf.StrTr(t, from, to)
+	s2 = append(s2, []byte(t)...)
+	return s2
+}
+
 func InitDb() {
 	dbmap = make(map[string]*DBd)
 

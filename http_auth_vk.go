@@ -91,9 +91,10 @@ func http_auth_vk(w http.ResponseWriter, r *http.Request) {
 
 		//все прошло отлично
 		//сохраняем данные юзера в текущей сессии
-		sess := GetSess(w, r)
-		sess.Values["user"] = mf.ToJsonStr(user_data)
-		sess.Save(r, w)
+		//sess := GetSess(w, r)
+		//sess.Values["user"] = mf.ToJsonStr(user_data)
+		//sess.Save(r, w)
+		SetSessUserData(w, r, mf.ToJsonStr(user_data))
 
 		//{
 		//	sess, _ := sess_store.Get(r, gcfg_secret_cookie_name)
