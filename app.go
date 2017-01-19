@@ -52,8 +52,8 @@ func main() {
 	}
 
 	LogPrint("start listening port: " + gcfg_webserver_port)
-	srv.ListenAndServe()
-
+	err := srv.ListenAndServe()
+	LogPrintErrAndExit("ERROR start listening port: "+gcfg_webserver_port+" ", err)
 }
 
 func http_static_favicon_ico(w http.ResponseWriter, r *http.Request) {

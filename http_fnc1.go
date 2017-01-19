@@ -6,7 +6,7 @@ import (
 	"net/url"
 	"strconv"
 
-	//mf "github.com/mixamarciv/gofncstd3000"
+	mf "github.com/mixamarciv/gofncstd3000"
 )
 
 //выводит сообщение об ошибке на странице
@@ -17,7 +17,13 @@ func RenderError(w http.ResponseWriter, r *http.Request, d map[string]interface{
 
 //возвращает json строку-ответ
 func RenderJson(w http.ResponseWriter, r *http.Request, d map[string]interface{}) {
-	RenderTemplate(w, r, d, "maintemplate.html", "error_info_page.html")
+	bytes, err := mf.ToJson(d)
+	if err != nil {
+		LogPrintErr("ERROR RenderJson", err)
+		w.Write([]byte(`{"error":"ERROR RenderJson"}`))
+		return
+	}
+	w.Write(bytes)
 	return
 }
 

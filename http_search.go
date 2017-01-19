@@ -5,9 +5,20 @@ import (
 	"net/http"
 	"net/url"
 	"strconv"
+	//"strings"
+	"regexp"
 
-	//mf "github.com/mixamarciv/gofncstd3000"
+	mf "github.com/mixamarciv/gofncstd3000"
 )
+
+var regexp_opentag *regexp.Regexp
+
+func init() {
+	regexp_opentag_text := "<[a-zA-Z]"
+	var err error
+	regexp_opentag, err = mf.RegexpCompile(regexp_opentag_text)
+	LogPrintErrAndExit("Ошибка компиляции регулярного выражения \""+regexp_opentag_text+"\"", err)
+}
 
 //хендлер для /s
 func http_search(w http.ResponseWriter, r *http.Request) {
@@ -29,104 +40,6 @@ func http_search(w http.ResponseWriter, r *http.Request) {
 	http_search__load_data(w, r, d)
 
 	RenderTemplate(w, r, d, "maintemplate.html", "search.html", "search_data.html")
-}
-
-//хендлер для /s
-func http_search_old(w http.ResponseWriter, r *http.Request) {
-	d := map[string]interface{}{}
-	LogPrint("http_search start")
-
-	q, _ := url.ParseQuery(r.URL.RawQuery)
-	d["url_rawquery"] = r.URL.RawQuery
-	d["get_vars"] = q
-
-	dtype, ok := q["d"]
-	if !ok {
-		d["error"] = fmt.Errorf("%s", "ОШИБКА http_search001: не верно указана БД")
-		RenderTemplate(w, r, d, "maintemplate.html", "search.html")
-		return
-	}
-
-	db, ok := dbmap[dtype[0]]
-	if !ok {
-		d["error"] = fmt.Errorf("%s", "ОШИБКА http_search002: не верно указана БД (возможно эта бд не существует)")
-		RenderTemplate(w, r, d, "maintemplate.html", "search.html")
-		return
-	}
-	d["db"] = db
-
-	if db.NeedAuth {
-		isauth, hasaccess := check_user_access_to_db(w, r, d)
-		LogPrint(fmt.Sprintf("isauth, hasaccess: %v, %v", isauth, hasaccess))
-		if !isauth {
-			//отправляем на авторизацию
-
-			u, err := url.Parse("/login")
-			if err != nil {
-				d["error"] = fmt.Errorf("%s", "ОШИБКА http_search003: url.Parse")
-				RenderTemplate(w, r, d, "maintemplate.html", "search.html")
-				return
-			}
-
-			parameters := url.Values{}
-			parameters.Add("f", "/"+r.URL.RawQuery)
-			parameters.Add("msg", "для доступа к этой БД требуется авторизация")
-			u.RawQuery = parameters.Encode()
-
-			LogPrint(fmt.Sprintf("URL: %s", u.String()))
-
-			http.Redirect(w, r, u.String(), 301)
-			return
-		}
-		if !hasaccess {
-			d["error"] = "ОШИБКА: у вас пока нет доступа к БД \"" + d["db"].(*DBd).Name + "\", доступ выдается админом после прохождения теста"
-			RenderTemplate(w, r, d, "maintemplate.html", "search.html")
-			return
-		}
-
-	} else {
-		d["db_access"] = "1" //доступ по умолчанию к бд
-	}
-
-	http_search__load_data(w, r, d)
-
-	RenderTemplate(w, r, d, "maintemplate.html", "search.html", "search_data.html")
-}
-
-//проверяет авторизован ли пользователь и имеет ли достаточно прав для доступа к бд d["db"]
-//если авторизован и есть право доступа то возвращает (1,1)
-//если аторизован но недостаточно прав то возвращаем ошибку (1,0)
-//если не авторизован то (0,0) //потом возможно редирект на http.Redirect(w, r, "/login?f="+d["url_rawquery"], 301)
-func check_user_access_to_db(w http.ResponseWriter, r *http.Request, d map[string]interface{}) (isauth bool, hasaccess bool) {
-	u := GetSessUserData(w, r)
-	if _, b := u["error"]; b {
-		isauth = false
-		hasaccess = false
-		return isauth, hasaccess
-	}
-
-	fdata := u["fdata"].(map[string]interface{})
-	accessdb := fdata["accessdb"].(map[string]interface{})
-
-	db := d["db"].(*DBd)
-	shortnamedb := db.ShortName
-
-	access, ok := accessdb[shortnamedb]
-	if !ok {
-		isauth = false
-		hasaccess = false
-		return isauth, hasaccess
-	}
-
-	d["db_access"] = access.(string)
-
-	if access.(string) == "0" {
-		isauth = true
-		hasaccess = false
-		return isauth, hasaccess
-	}
-
-	return isauth, hasaccess
 }
 
 //загрузка данных в d["data"] по заданным критериям из d["url_vars"]
@@ -161,7 +74,7 @@ func http_search__load_data(w http.ResponseWriter, r *http.Request, d map[string
 	str_skip := strconv.Itoa(gcfg_cnt_posts_on_page * (page - 1))
 
 	query := "SELECT FIRST " + str_first + " SKIP " + str_skip + " "
-	query += `  p.name,p.tags,COALESCE(p.preview,LEFT(p.text,1200)),p.uuid_user,LEFT(p.date_create,16),p.uuid FROM tpost p WHERE 1=1
+	query += `  p.name,p.tags,p.preview,p.text,p.uuid_user,LEFT(p.date_create,16),p.uuid FROM tpost p WHERE 1=1
 				ORDER BY p.date_create DESC
 			`
 	db := d["db"].(*DBd).DB
@@ -174,8 +87,8 @@ func http_search__load_data(w http.ResponseWriter, r *http.Request, d map[string
 	data_rows := make([]map[string]string, 0)
 	cnt := 0
 	for rows.Next() {
-		var name, tags, preview, uuid_user, date_create, uuid NullString
-		if err := rows.Scan(&name, &tags, &preview, &uuid_user, &date_create, &uuid); err != nil {
+		var name, tags, preview, text, uuid_user, date_create, uuid NullString
+		if err := rows.Scan(&name, &tags, &preview, &text, &uuid_user, &date_create, &uuid); err != nil {
 			d["error"] = fmtError("http_search__load_data ERROR002 rows.Scan: query:\n"+query+"\n\n", err)
 			return
 		}
@@ -187,7 +100,28 @@ func http_search__load_data(w http.ResponseWriter, r *http.Request, d map[string
 		dr := make(map[string]string)
 		dr["name"] = name.get_trcp1251("")
 		dr["tags"] = tags.get_trcp1251("")
-		dr["preview"] = preview.get_trcp1251("")
+		tpreview := preview.get_trcp1251_long("")
+		if tpreview == "" {
+			tpreview = text.get_trcp1251_long("")
+			i := len(tpreview)
+			add_text := ""
+			max_post_len := 1000
+			if i > max_post_len {
+				i = max_post_len
+				add_text = "..."
+			}
+
+			tpreview = tpreview[:i]
+
+			ja := regexp_opentag.FindStringIndex(tpreview)
+			if len(ja) > 0 {
+				tpreview = tpreview[:ja[0]]
+				add_text = "..."
+			}
+			tpreview += add_text
+		}
+		dr["preview"] = tpreview
+
 		dr["uuid_user"] = uuid_user.get("")
 		dr["date_create"] = date_create.get("")
 		dr["uuid"] = uuid.get("")

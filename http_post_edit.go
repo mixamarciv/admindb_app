@@ -104,22 +104,22 @@ func http_post_edit_ajax(w http.ResponseWriter, r *http.Request) {
 
 	http_parse_url__get_db(w, r, d)
 	if d["error"] != nil {
-		RenderError(w, r, d)
+		RenderJson(w, r, d)
 		return
 	}
 
 	if d["db_access"].(string) < "2" {
 		d["error"] = fmt.Errorf("%s", "у вас нет доступа к редактированию записей БД \""+d["db"].(*DBd).Name+"\"")
 		d["errorcode"] = "dbnoaccess"
-		RenderError(w, r, d)
+		RenderJson(w, r, d)
 		return
 	}
 
 	http_post_edit__load_data(w, r, d)
 	if d["error"] != nil {
-		RenderError(w, r, d)
+		RenderJson(w, r, d)
 		return
 	}
 
-	RenderTemplate(w, r, d, "maintemplate.html", "post_edit.html")
+	RenderJson(w, r, d)
 }
