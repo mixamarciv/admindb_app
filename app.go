@@ -34,6 +34,7 @@ func main() {
 
 	r.HandleFunc("/s", LogReq(http_search))
 	r.HandleFunc("/p", LogReq(http_post_view))
+
 	r.HandleFunc("/e", LogReq(http_post_edit))
 	r.HandleFunc("/e_ajax", LogReq(http_post_edit_ajax))
 
@@ -63,7 +64,6 @@ func http_static_favicon_ico(w http.ResponseWriter, r *http.Request) {
 		ShowError("http_static_favicon_ico: OpenFile error", err, w, r)
 		return
 	}
-
 	io.Copy(w, f)
 }
 

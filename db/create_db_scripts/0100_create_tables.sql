@@ -1,50 +1,111 @@
-CREATE TABLE tuser (
-    uuid          VARCHAR(36),
-    ftime_create  TIMESTAMP DEFAULT CURRENT_timestamp,
-    ftime_update  TIMESTAMP DEFAULT CURRENT_timestamp,
-    id            VARCHAR(200),
-    name	  VARCHAR(500),
-    fdata         VARCHAR(7000)
-);
-CREATE UNIQUE INDEX tuser_IDX1 ON tuser (uuid);
-CREATE        INDEX tuser_IDX2 ON tuser (id);
 
-CREATE TABLE tuser_auth_vk (
-    uuid          VARCHAR(36),
-    uuid_tuser    VARCHAR(36),
-    ftime_create  TIMESTAMP DEFAULT CURRENT_timestamp,
-    ftime_update  TIMESTAMP DEFAULT CURRENT_timestamp,
-    access_token  VARCHAR(1000),
-    fdata         VARCHAR(7000)
-);
-CREATE UNIQUE INDEX tuser_auth_vk_IDX1 ON tuser_auth_vk (uuid);
-CREATE        INDEX tuser_auth_vk_IDX2 ON tuser_auth_vk (uuid_tuser,ftime_create);
+CREATE TABLE TPOST (
+    NAME              VARCHAR(1000) CHARACTER SET WIN1251 COLLATE WIN1251,
+    TAGS              VARCHAR(4000) CHARACTER SET WIN1251 COLLATE WIN1251,
+    TEXT              VARCHAR(16000) CHARACTER SET WIN1251 COLLATE WIN1251,
+    PREVIEW           VARCHAR(2000) CHARACTER SET WIN1251 COLLATE WIN1251,
+    UUID_USER_CREATE  VARCHAR(36) CHARACTER SET WIN1251 COLLATE WIN1251,
+    UUID_USER         VARCHAR(36) CHARACTER SET WIN1251 COLLATE WIN1251,
+    DATE_MODIFY       TIMESTAMP DEFAULT current_timestamp,
+    DATE_CREATE       TIMESTAMP,
+    UUID              VARCHAR(36) CHARACTER SET WIN1251 COLLATE WIN1251,
 
-/************************************************************************/
+    UUID_USER_PUBLISH VARCHAR(36) CHARACTER SET WIN1251 COLLATE WIN1251,
+    DATE_PUBLISH      TIMESTAMP,
+    EDIT_TYPE         VARCHAR(10) CHARACTER SET WIN1251 COLLATE WIN1251  -- update,create,publish,delete
+);
+/*******************
+UUID_USER_CREATE - пользователь который создал запись
+UUID_USER - последний пользователь который внес изменения в пост
+UUID_USER_PUBLISH - пользователь который подтвердил изменения и разрешил публикацию поста
+********************/
+
+CREATE TABLE TPOST_LOG (
+    OPER              VARCHAR(10) CHARACTER SET WIN1251 COLLATE WIN1251,
+    NAME              VARCHAR(1000) CHARACTER SET WIN1251 COLLATE WIN1251,
+    TAGS              VARCHAR(4000) CHARACTER SET WIN1251 COLLATE WIN1251,
+    TEXT              VARCHAR(16000) CHARACTER SET WIN1251 COLLATE WIN1251,
+    PREVIEW           VARCHAR(2000) CHARACTER SET WIN1251 COLLATE WIN1251,
+    UUID_USER_CREATE  VARCHAR(36) CHARACTER SET WIN1251 COLLATE WIN1251,
+    UUID_USER         VARCHAR(36) CHARACTER SET WIN1251 COLLATE WIN1251,
+    DATE_MODIFY       TIMESTAMP,
+    DATE_CREATE       TIMESTAMP DEFAULT current_timestamp,
+    UUID              VARCHAR(36) CHARACTER SET WIN1251 COLLATE WIN1251,
+
+    UUID_USER_PUBLISH VARCHAR(36),
+    DATE_PUBLISH      TIMESTAMP,
+    EDIT_TYPE         VARCHAR(10)  -- update,create,publish,delete
+);
+
+
+CREATE DESCENDING INDEX TPOST_IDX1   ON TPOST (EDIT_TYPE,DATE_CREATE);
+CREATE UNIQUE     INDEX IDX_TPOST_1  ON TPOST (UUID,EDIT_TYPE,UUID_USER,UUID_USER_PUBLISH);
+CREATE            INDEX IDX_TPOST_2  ON TPOST (EDIT_TYPE,UUID);
+CREATE            INDEX IDX_TPOST_3  ON TPOST (UUID_USER);
+
+CREATE       INDEX IDX_TPOST_LOG_1   ON TPOST_LOG (UUID,DATE_CREATE);
+CREATE       INDEX IDX_TPOST_LOG_2   ON TPOST_LOG (UUID_USER);
+CREATE       INDEX IDX_TPOST_LOG_3   ON TPOST_LOG (OPER,DATE_CREATE);
+
+
+
 SET TERM ^ ;
-CREATE TRIGGER tuser_BI0 FOR tuser
+
+CREATE TRIGGER TPOST_BI0 FOR TPOST
 ACTIVE BEFORE INSERT POSITION 0
 AS
 begin
-  if (new.uuid is null) then begin
-    new.uuid = uuid_to_char(gen_uuid());
-  end
+  if (new.date_create is null) then new.date_create = current_timestamp;
+  if (new.date_modify is null) then new.date_modify = current_timestamp;
+  if (new.uuid is null) then new.uuid = uuid_to_char(gen_uuid());
 end
 ^
 
-CREATE TRIGGER tuser_auth_vk_BI0 FOR tuser_auth_vk
-ACTIVE BEFORE INSERT POSITION 0
+CREATE TRIGGER TPOST_BU0 FOR TPOST
+ACTIVE BEFORE UPDATE POSITION 0
 AS
 begin
-  if (new.uuid is null) then begin
-    new.uuid = uuid_to_char(gen_uuid());
-  end
+    new.date_modify = current_timestamp;
+    new.date_create = old.date_create;
+    new.uuid = old.uuid;
+
+    INSERT INTO TPOST_LOG(OPER,NAME,TAGS,TEXT,PREVIEW,UUID_USER_CREATE,UUID_USER,DATE_MODIFY,UUID,UUID_USER_PUBLISH,DATE_PUBLISH,EDIT_TYPE)
+    VALUES('update',old.name,old.tags,old.text,old.preview,old.uuid_user_create,old.uuid_user,old.date_modify,old.uuid,old.uuid_user_publish,old.date_publish,old.edit_type);
 end
 ^
+
+CREATE TRIGGER TPOST_BD0 FOR TPOST
+ACTIVE BEFORE DELETE POSITION 0
+AS
+begin
+    INSERT INTO TPOST_LOG(OPER,NAME,TAGS,TEXT,PREVIEW,uuid_user_create,UUID_USER,DATE_MODIFY,UUID,UUID_USER_PUBLISH,DATE_PUBLISH,EDIT_TYPE)
+    VALUES('delete',old.name,old.tags,old.text,old.preview,old.uuid_user_create,old.uuid_user,old.date_modify,old.uuid,old.uuid_user_publish,old.date_publish,old.edit_type);
+end
+^
+
 SET TERM ; ^
-/************************************************************************/
 
-COMMIT WORK;
+
+
+
+
+CREATE TABLE TWORD (
+    ID           BIGINT,
+    WORD         VARCHAR(100) CHARACTER SET WIN1251 COLLATE WIN1251
+);
+CREATE UNIQUE INDEX IDX_TWORD_1 ON TWORD (ID);
+CREATE UNIQUE INDEX IDX_TWORD_2 ON TWORD (WORD);
+
+
+CREATE TABLE TWORD_POST (
+    UUID_POST    VARCHAR(36),
+    ID_WORD      BIGINT,
+    CNT          BIGINT
+);
+CREATE INDEX IDX_TWORD_POST_1 ON TWORD_POST (UUID_POST, CNT);
+CREATE INDEX IDX_TWORD_POST_2 ON TWORD_POST (ID_WORD, CNT);
+
+
 
 
 

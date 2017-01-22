@@ -3,10 +3,15 @@ package main
 import (
 	"database/sql"
 	//"strconv"
+	"bytes"
 
 	_ "github.com/nakagami/firebirdsql"
 
 	//s "strings"
+	"fmt"
+	"io"
+
+	"github.com/qiniu/iconv"
 
 	mf "github.com/mixamarciv/gofncstd3000"
 )
@@ -34,6 +39,7 @@ func (p *NullString) get(defaultval string) string {
 
 func (p *NullString) get_trcp1251(defaultval string) string {
 	if p.Valid {
+		return p.String
 		return mf.StrTr(p.String, "cp1251", "UTF-8")
 	}
 	return defaultval
@@ -41,24 +47,38 @@ func (p *NullString) get_trcp1251(defaultval string) string {
 
 func (p *NullString) get_trcp1251_long(defaultval string) string {
 	if p.Valid {
-		return string(StrTr2([]byte(p.String), "cp1251", "UTF-8"))
+		return p.String
+		return string(dbStrTr2([]byte(p.String), "cp1251", "UTF-8"))
 	}
 	return defaultval
 }
 
-func StrTr2(s []byte, from string, to string) []byte {
-	cnt := 200
-	cntlen := len(s) % cnt
-	var s2 []byte
-	for i := 0; i < len(s)-cntlen; i += cnt {
-		t := string(s[i : i+cnt])
-		t = mf.StrTr(t, from, to)
-		s2 = append(s2, []byte(t)...)
+func dbStrTr2(s []byte, from string, to string) []byte {
+	//s2 := make([]byte, len(s))
+	// = mf.StrTr(t, from, to)
+	//s2 = append(s2, []byte(t)...)
+	return s
+
+	cd, err := iconv.Open(to, from) // convert from to to
+	if err != nil {
+		ret := []byte(fmt.Sprintf("ERROR StrTr2: iconv.Open("+to+","+from+") failed!\n%#v", err))
+		return ret
 	}
-	t := string(s[len(s)-cntlen : len(s)])
-	t = mf.StrTr(t, from, to)
-	s2 = append(s2, []byte(t)...)
-	return s2
+	defer cd.Close()
+
+	input := bytes.NewBuffer(s) // eg. input := os.Stdin || input, err := os.Open(file)
+	bufSize := 0                // default if zero
+	r := iconv.NewReader(cd, input, bufSize)
+
+	out := bytes.NewBuffer([]byte{})
+
+	_, err = io.Copy(out, r)
+	if err != nil {
+		ret := []byte(fmt.Sprintf("ERROR StrTr2: io.Copy failed!\n%#v", err))
+		return ret
+	}
+
+	return out.Bytes()
 }
 
 func InitDb() {
@@ -78,6 +98,7 @@ func conn_to_db(shortName, name, path string, NeedAuth bool) *DBd {
 	dbd.NeedAuth = NeedAuth
 	//path = "d/program/go/projects/test_martini_app/db/DB1.FDB"
 	dbopt := "sysdba:" + gcfg_db_pass + "@127.0.0.1:3050/" + path
+	//dbopt += "?code_page=cp1251&cp=cp1251&codepage=cp1251"
 	var err error
 	db, err := sql.Open("firebirdsql", dbopt)
 	LogPrintErrAndExit("ошибка подключения к базе данных "+dbopt, err)

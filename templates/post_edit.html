@@ -1,21 +1,264 @@
 
 {{define "content"}}
-<style>
-.post_text {
-	word-wrap: break-word;
-	white-space: pre-wrap;       /* css-3 */
-	word-wrap: break-word;       /* Internet Explorer 5.5+ */
-	font-family: Lucida Console,Lucida Sans Typewriter,monaco,Bitstream Vera Sans Mono,monospace;
+<script language='javascript'>
+window.edit_form3000__data = {load_data:{},save_data:{},publish:{},post:{}}
+
+$(document).ready(function(){
+	var p = window.edit_form3000__data.post;
+	p.db                 = '{{.db.ShortName}}';
+	p.uuid               = '{{.data.uuid}}';
+	p.uuid_user_create   = '{{.data.uuid_user_create}}';
+	p.uuid_user          = '{{.data.uuid_user}}';
+	p.uuid_user_publish  = '{{.data.uuid_user_publish}}';
+	p.edit_type          = '{{.data.edit_type}}';
+	if(p.uuid!=''){
+		p.edit_type = 'update';
+		edit_form3000__load_data();
+	}
+	
+	var f = $('#edit_form3000');	
+	f.find('#post_save').on('click',edit_form3000__save_data);
+	f.find('#post_publish').on('click',edit_form3000__publish);
+	//f.find('#post_delete').on('click',edit_form3000__delete_data);
+	
+	
+})
+
+//выводим прогресс бар
+function edit_form3000__show_progress(show,text){
+	if(show==1){
+		$('#edit_form3000_progress').show();
+		if(!text) text = 'загрузка..';
+		$('#edit_form3000_progress>.text').html(text);
+		$('#edit_form3000_actions').hide();
+	}else{
+		$('#edit_form3000_progress').hide();
+		$('#edit_form3000_actions').show();
+	}
 }
-.post_text>code {
-	display:block;
-    content: " ";
-    clear: both;
-	float: none;
-    display: table;
-	padding: 5px;
+
+//подготовка и загрузка данных формы
+function edit_form3000__load_data(){
+	var d = window.edit_form3000__data.load_data;
+	
+	if(d.load){
+		d.wait = 1;
+		return
+	}
+	d.load = 1;
+	
+	edit_form3000__show_progress(1)
+	edit_form3000__load_data_fn(function(){
+		var d = window.edit_form3000__data.load_data;
+		d.load = 0;
+		if(d.wait){
+			d.wait = 0;
+			return edit_form3000__load_data()
+		}
+		edit_form3000__show_progress(0)
+	});
 }
-</style>
+
+//подготовка и сохранение данных формы
+function edit_form3000__save_data(){
+	var d = window.edit_form3000__data.save_data;
+	
+	if(d.load){
+		d.wait = 1;
+		return
+	}
+	d.load = 1;
+	
+	edit_form3000__show_progress(1)
+	edit_form3000__save_data_fn(function(){
+		var d = window.edit_form3000__data.save_data;
+		d.load = 0;
+		if(d.wait){
+			d.wait = 0;
+			return edit_form3000__save_data()
+		}
+		//edit_form3000__show_progress(0)
+		edit_form3000__load_data()
+	});
+}
+
+//подготовка и публикация сохраненного ранее поста
+function edit_form3000__publish(){
+	var d = window.edit_form3000__data.publish;
+	
+	if(d.load){
+		d.wait = 1;
+		return
+	}
+	d.load = 1;
+	
+	edit_form3000__show_progress(1)
+	edit_form3000__publish_fn(function(){
+		var d = window.edit_form3000__data.publish;
+		d.load = 0;
+		if(d.wait){
+			d.wait = 0;
+			return edit_form3000__publish()
+		}
+		//edit_form3000__show_progress(0)
+		edit_form3000__load_data()
+	});
+}
+
+//вывод сообщения об ошибке
+function show_ajax_error(objselector,data,fn) {
+	if(data["error"]){
+		var errorcode = data["errorcode"];
+		if(!errorcode) errorcode = 'hz';
+		show_msg(objselector,'['+errorcode+'] '+data["error"]+'<code>'+var_dump(data)+'</code>',{type:'error',max_msg_show:2});
+	}
+	if(fn) fn();
+}
+//<!-- -------------------------------------------------------------------------------------------------- -->
+//загрузка данных формы
+function edit_form3000__load_data_fn(fn){
+  setTimeout(function(){
+	var p = window.edit_form3000__data.post;
+    $.ajax({
+        type: 'POST',
+        url: '/e_ajax?d='+p.db+'&id='+p.uuid+'&type=load',
+        data: {}
+    }).always(function() {
+	}).done(function(data) {
+			//alert(var_dump(data.data))
+			if(data["error"]) return show_ajax_error('#edit_form3000_result',data,fn);
+
+			var p = window.edit_form3000__data.post;
+			var d = data.data;
+			var f = $('#edit_form3000');
+			
+			p.uuid              = d.uuid;
+			p.uuid_user         = d.uuid_user;
+			p.uuid_user_create  = d.uuid_user_create;
+			p.uuid_user_publish = d.uuid_user_publish;
+			p.edit_type         = d.edit_type;
+
+			f.find('.post_name_heder').val(d.name);
+			f.find('.post_name').val(d.name);
+			f.find('.post_preview').val(d.preview);
+			f.find('.post_text').val(d.text);
+			f.find('.post_tags').val(d.tags);
+			f.find('.edit_type').html(p.edit_type);
+			
+			f.find('.uuid_post').html(p.uuid);
+			f.find('.uuid_user_update').html(p.uuid_user);
+			f.find('.uuid_user_create').html(p.uuid_user_create);
+			f.find('.uuid_user_publish').html(p.uuid_user_publish);
+			
+			fn()
+	}).fail(function() {
+			var msg = "<b>ВНИМАНИЕ: произошла внутренняя ошибка сервера</b><br> повторите ваш запрос немного позже"
+			show_msg('#edit_form3000_result',msg,{is_sys_error:1,max_msg_show:1})
+			fn()
+	})
+  },100);
+}
+
+//сохранение данных формы
+function edit_form3000__save_data_fn(fn){
+	var p = window.edit_form3000__data.post;
+	var d = {} //текущие данные которые попытаемся сохранить
+	var f = $('#edit_form3000');
+	d.db                = p.db;
+	d.uuid              = p.uuid;
+	d.uuid_user         = p.uuid_user;
+	d.uuid_user_create  = p.uuid_user_create;
+	d.uuid_user_publish = p.uuid_user_publish;
+	d.edit_type         = p.edit_type;
+	d.name       = f.find('.post_name').val();
+	d.preview    = f.find('.post_preview').val();
+	d.text       = f.find('.post_text').val();
+	d.tags       = f.find('.post_tags').val();
+	d.type       = 'save'
+
+    $.ajax({
+        type: 'POST',
+        url: '/e_ajax?d='+p.db+'&id='+p.uuid+'&type=save',
+        data: d
+    }).always(function() {
+	}).done(function(data) {
+			if(data["error"]) return show_ajax_error('#edit_form3000_result',data,fn);
+			var d = data.data;
+			if(!d){
+				var msg = "<b>ОШИБКА:</b> не верный формат данных овета <br><pre>"+var_dump(data)+"</pre> ";
+				show_msg('#edit_form3000_result',msg,{type:'error',max_msg_show:1})
+				return fn()
+			}
+			var p = window.edit_form3000__data.post;
+			
+			var msg = "<b>отлично:</b> данные поста "+p.uuid+" успешно сохранены (edit_type: "+p.edit_type+")";
+			
+			p.uuid              = d.uuid;
+			p.uuid_user         = d.uuid_user;
+			p.uuid_user_create  = d.uuid_user_create;
+			p.uuid_user_publish = d.uuid_user_publish;
+			p.edit_type         = d.edit_type;
+			
+			show_msg('#edit_form3000_result',msg,{type:'info',max_msg_show:2})
+			
+			return fn()
+	}).fail(function() {
+			var msg = "<b>ВНИМАНИЕ: произошла внутренняя ошибка сервера</b><br> повторите ваш запрос немного позже"
+			show_msg('#edit_form3000_result',msg,{is_sys_error:1,max_msg_show:1})
+			return fn()
+	})
+}
+
+//публикация записи tpost
+function edit_form3000__publish_fn(fn){
+	var p = window.edit_form3000__data.post;
+	var d = {} //текущие данные которые попытаемся сохранить
+	var f = $('#edit_form3000');
+	d.db                = p.db;
+	d.uuid              = p.uuid;
+	d.uuid_user         = p.uuid_user;
+	d.uuid_user_create  = p.uuid_user_create;
+	d.uuid_user_publish = p.uuid_user_publish;
+	d.edit_type         = p.edit_type;
+	d.name       = f.find('.post_name').val();
+	d.preview    = f.find('.post_preview').val();
+	d.text       = f.find('.post_text').val();
+	d.tags       = f.find('.post_tags').val();
+	d.type       = 'save'
+
+    $.ajax({
+        type: 'POST',
+        url: '/e_ajax?d='+p.db+'&id='+p.uuid+'&type=publish',
+        data: d
+    }).always(function() {
+	}).done(function(data) {
+			if(data["error"]) return show_ajax_error('#edit_form3000_result',data,fn);
+			var d = data.data;
+			if(!d){
+				var msg = "<b>ОШИБКА:</b> не верный формат данных овета <br><pre>"+var_dump(data)+"</pre> ";
+				show_msg('#edit_form3000_result',msg,{type:'error',max_msg_show:1})
+				return fn()
+			}
+			var p = window.edit_form3000__data.post;
+			
+			var msg = "<b>отлично:</b> данные поста "+p.uuid+" успешно опубликованы (edit_type: "+p.edit_type+")";
+			
+			p.uuid              = d.uuid;
+			p.uuid_user         = d.uuid_user;
+			p.uuid_user_create  = d.uuid_user_create;
+			p.uuid_user_publish = d.uuid_user_publish;
+			p.edit_type         = d.edit_type;
+			
+			show_msg('#edit_form3000_result',msg,{type:'info',max_msg_show:2})
+			
+			return fn()
+	}).fail(function() {
+			var msg = "<b>ВНИМАНИЕ: произошла внутренняя ошибка сервера</b><br> повторите ваш запрос немного позже"
+			show_msg('#edit_form3000_result',msg,{is_sys_error:1,max_msg_show:1})
+			return fn()
+	})
+}
+</script>
 
 
 
@@ -27,45 +270,71 @@
 {{end}}
 
 <!-- -------------------------------------------------------------------------------------------------- -->
-<form method="POST" action="#" class="form-horizontal" id="edit_form3000">
+<div method="POST" action="#" class="form-horizontal" id="edit_form3000">
 
 	<div class="form-group">
-		<div class="col-md-9">
-		    <h1><a href="/p?d={{.db.ShortName}}&id={{.data.uuid}}">{{.data.name}}</a></h1>
+		<div class="col-md-7">
+		    <h1><a href="/p?d={{.db.ShortName}}&id={{.data.uuid}}" class="post_name_heder">{{.data.name}}</a></h1>
 		</div>
-		<div class="col-md-3">
+		<div class="col-md-5">
 		    <small>db: <a href="/s?d={{.db.ShortName}}"><b>{{.db.Name}}</b></a></small>
+			<br>
+			<div>edit_type:<d class="edit_type"> - </b></div>
+			<div>post: <b class="uuid_post"> - </b></div>
+			<div>user_create: <b class="uuid_user_create"> - </b></div>
+			<div>user_update: <b class="uuid_user_update"> - </b></div>
+			<div>user_publish: <b class="uuid_user_publish"> - </b></div>
 		</div>
 	</div>
 		
 	<div class="form-group">
 	    <label for="name">название:</label>
-	    <input class="form-control" id="post_name" placeholder="введите название" type="text" name="name" value="{{.data.name}}">
+	    <input class="form-control post_name" placeholder="введите название" type="text" name="name" value="">
 	</div>
 	<div class="form-group">
 		<label for="preview">превью:</label>
-	    <textarea class="form-control" rows="3" placeholder="введите превью текста (он будет отображаться в списке при поиске)" name="preview">{{.data.preview}}</textarea>
+	    <textarea class="form-control post_preview" rows="3" placeholder="введите превью текста (он будет отображаться в списке при поиске)" name="preview"></textarea>
 	</div>
 	<div class="form-group">
 		<label for="text">текст:</label>
-	    <textarea class="form-control" rows="8" placeholder="введите текст" name="text">{{.data.text}}</textarea>
+	    <textarea class="form-control post_text" rows="8" placeholder="введите текст" name="text"></textarea>
 	</div>
 	<div class="form-group">
 		<label for="tags">теги:</label>
-	    <textarea class="form-control" rows="2" placeholder="теги поста (ключевые слова по которым его будет не сложно найти)" name="tags">{{.data.tags}}</textarea>
+	    <textarea class="form-control post_tags" rows="1" placeholder="теги поста (ключевые слова по которым его будет не сложно найти)" name="tags"></textarea>
 	</div>
 	
-	<div class="form-group">
-	    <label for="post_save">перед сохранением проверьте введенные данные</label>
-	    <div class="row">
-		
-		<div class="col-md-6"><input type="submit" name="post_save" id="post_save" value="сохранить" class="btn btn-lg btn-default btn-block"></div>
-		<div class="col-md-4"></div>
-		<div class="col-md-2"><input type="submit" name="post_delete" id="post_delete" value="удалить" class="btn btn-lg btn-default btn-block"></div>
+	
+	
+	
+	<div class="form-group" >
+		<div id="edit_form3000_result">
+
+		</div>
+		<div id="edit_form3000_progress">
+				<table border=0 style="background: rgba(0,0,0, 0);padding:0px;margin:0px;"><tr><td>
+				    <img src="/public/img/loading003_16x11.gif" style="padding:15px;marging:15px;">
+				</td><td>
+				    <span class="progress_text">загрузка</span>
+				</td></tr></table>
+		</div>
+		<div id="edit_form3000_actions" style="display:none;">
+		    <label for="post_save">перед сохранением проверьте введенные данные</label>
+		    <div class="row">
+				<div class="col-md-3">
+					<input type="submit" name="post_save" id="post_save" value="сохранить" class="btn btn-lg btn-default btn-block">
+				</div>
+				<div class="col-md-3">
+					<input type="submit" name="post_publish" id="post_publish" value="опубликовать" class="btn btn-lg btn-default btn-block">
+				</div>
+				<div class="col-md-4"></div>
+				<div class="col-md-2"><input type="submit" name="post_delete" id="post_delete" value="удалить" class="btn btn-lg btn-default btn-block"></div>
+		    </div>
 	    </div>
-	    
 	</div>
-</form>
+	
+	
+</div>
 
 <!-- -------------------------------------------------------------------------------------------------- -->
 

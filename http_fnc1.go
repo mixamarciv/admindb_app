@@ -6,6 +6,8 @@ import (
 	"net/url"
 	"strconv"
 
+	"strings"
+
 	mf "github.com/mixamarciv/gofncstd3000"
 )
 
@@ -17,6 +19,7 @@ func RenderError(w http.ResponseWriter, r *http.Request, d map[string]interface{
 
 //возвращает json строку-ответ
 func RenderJson(w http.ResponseWriter, r *http.Request, d map[string]interface{}) {
+	w.Header().Set("Content-Type", "application/json")
 	bytes, err := mf.ToJson(d)
 	if err != nil {
 		LogPrintErr("ERROR RenderJson", err)
@@ -115,4 +118,13 @@ func http_get_var_str(get_vars url.Values, varname string, defaultval string) st
 		return defaultval
 	}
 	return vals[0]
+}
+
+//тут подготавливаем переменную сразу для вставки в sql запрос (делаем двойные одинарные кавычки ')
+func http_get_var_str_sql(get_vars url.Values, varname string, defaultval string) string {
+	vals, ok := get_vars[varname]
+	if !ok {
+		return defaultval
+	}
+	return strings.Replace(vals[0], "'", "''", -1)
 }
