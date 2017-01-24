@@ -87,6 +87,16 @@ ff2 {
 				{{end}}
 	      </ul>
 		  <ul class="nav navbar-nav navbar-right">
+		
+			  {{if and (.user) (.db) }}
+			  <li class="" >
+					<a href="/e?d={{.db.ShortName}}&id=new&user={{.user.uuid_user}}"  class=""
+						data-toggle="tooltip" title="добавить запись" data-original-title="добавить новую запись" > 
+						добавить запись 
+					</a>
+			  </li>
+			  {{end}}
+			
 		      <li {{if eq .http_request.url.Path "/login" }} class="active" {{end}}>
 					<a href="/login?pox"><b>
 						{{if .sess.user.name }}
@@ -108,6 +118,7 @@ ff2 {
 	                </div>
 					-->
 	          </li>
+			
 		  </ul>
     </div>
   </div>

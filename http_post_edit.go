@@ -8,7 +8,7 @@ import (
 	"errors"
 	"strings"
 
-	//mf "github.com/mixamarciv/gofncstd3000"
+	mf "github.com/mixamarciv/gofncstd3000"
 	//"html/template"
 )
 
@@ -81,6 +81,27 @@ func http_post_edit__load_data(w http.ResponseWriter, r *http.Request, d map[str
 //  d["data"] - данные поста
 // или d["error"] - в случае ошибки
 func http_post_edit__load_data_fn(w http.ResponseWriter, r *http.Request, d map[string]interface{}, id, uuid_user string) {
+	if id == "new" {
+		//если создается новая запись
+		//то в любом случае создаем её от имени текущего пользователя
+		uuid_user_this := get_map_val(d, "", "user", "uuid_user").(string)
+
+		dr := make(map[string]interface{})
+		dr["name"] = ""
+		dr["tags"] = ""
+		dr["preview"] = ""
+		dr["text"] = ""
+		dr["uuid_user"] = uuid_user_this
+		dr["uuid_user_create"] = uuid_user_this
+		dr["uuid_user_publish"] = ""
+		dr["date_create"] = ""
+		dr["date_modify"] = ""
+		dr["edit_type"] = "new"
+		dr["uuid"] = mf.StrUuid()
+		d["data"] = dr
+		return
+	}
+
 	query := `SELECT * FROM
 	          (SELECT FIRST 1 SKIP 0 
 	            0 AS n,p.name,p.tags,p.preview,p.text,p.uuid_user,LEFT(p.date_create,16) AS date_create,p.uuid,p.edit_type,p.uuid_user_create,p.uuid_user_publish,LEFT(p.date_modify,16) AS date_modify
@@ -264,11 +285,11 @@ func http_post_edit__save_data(w http.ResponseWriter, r *http.Request, d map[str
 		data["edit_type"] = "create"
 		query = `INSERT INTO TPOST(NAME,TAGS,TEXT,PREVIEW,UUID_USER,
 				   DATE_CREATE,
-				   UUID/*,UUID_USER_PUBLISH*/,EDIT_TYPE
+				   UUID/*,UUID_USER_PUBLISH*/,EDIT_TYPE,UUID_USER_CREATE
 				   )
 			    VALUES('` + name + `','` + tags + `','` + text + `','` + preview + `','` + uuid_user_this + `',
 				   (SELECT MIN(date_create) FROM tpost WHERE uuid='` + uuid + `'),
-				   '` + uuid + `'/*,'` + uuid_user_this + `'*/,'` + data["edit_type"].(string) + `'
+				   '` + uuid + `'/*,'` + uuid_user_this + `'*/,'` + data["edit_type"].(string) + `','` + uuid_user_this + `'
 				   )`
 	}
 	//LogPrint("=====================================================================")
@@ -313,7 +334,7 @@ func http_post_edit__publish(w http.ResponseWriter, r *http.Request, d map[strin
 
 	//проверяем есть ли обновляемые записи в бд
 	query := `SELECT 
-				(SELECT COUNT(*) FROM tpost p WHERE p.uuid='` + uuid + `') AS c1,
+				(SELECT COUNT(*) FROM tpost p WHERE p.uuid='` + uuid + `' AND p.edit_type='publish') AS c1,
 				(SELECT COUNT(*) FROM tpost p WHERE p.uuid='` + uuid + `' AND p.uuid_user='` + uuid_user + `' AND p.edit_type!='publish') AS c2
 			  FROM rdb$database`
 	rows := run_db_query(d, query)
@@ -368,6 +389,9 @@ func http_post_edit__publish(w http.ResponseWriter, r *http.Request, d map[strin
 		if b == nil {
 			return
 		}
+
+		LogPrint(fmt.Sprintf("publish update record id: %s; user: %s", uuid, uuid_user))
+
 	} else if c1 > 0 && c2 == 0 {
 		//если пользователь пытается опубликовать запись но до этого её не редактировал (не сохранял изменения)
 		d["error"] = "нет обновленных(сохраненных) данных для публикации записи"
@@ -399,6 +423,7 @@ func http_post_edit__publish(w http.ResponseWriter, r *http.Request, d map[strin
 		if b == nil {
 			return
 		}
+		LogPrint(fmt.Sprintf("publish new record id: %s; user: %s", uuid, uuid_user))
 	}
 	//LogPrint("=====================================================================")
 	//LogPrint(fmt.Sprintf("edit_type: %#v", data["edit_type"]))

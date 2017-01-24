@@ -11,17 +11,17 @@ $(document).ready(function(){
 	p.uuid_user          = '{{.data.uuid_user}}';
 	p.uuid_user_publish  = '{{.data.uuid_user_publish}}';
 	p.edit_type          = '{{.data.edit_type}}';
-	if(p.uuid!=''){
-		p.edit_type = 'update';
-		edit_form3000__load_data();
-	}
+	
+	//if(p.edit_type!='create'){
+	//	edit_form3000__load_data();
+	//}
 	
 	var f = $('#edit_form3000');	
 	f.find('#post_save').on('click',edit_form3000__save_data);
 	f.find('#post_publish').on('click',edit_form3000__publish);
 	//f.find('#post_delete').on('click',edit_form3000__delete_data);
 	
-	
+	edit_form3000__load_data();
 })
 
 //выводим прогресс бар
@@ -117,8 +117,14 @@ function show_ajax_error(objselector,data,fn) {
 //<!-- -------------------------------------------------------------------------------------------------- -->
 //загрузка данных формы
 function edit_form3000__load_data_fn(fn){
-  setTimeout(function(){
+  setTimeout(function(){	
 	var p = window.edit_form3000__data.post;
+	if(p.edit_type=='new'){
+		edit_form3000__setformdata();
+		fn();
+		return 
+	}
+	
     $.ajax({
         type: 'POST',
         url: '/e_ajax?d='+p.db+'&id='+p.uuid+'&type=load',
@@ -130,25 +136,21 @@ function edit_form3000__load_data_fn(fn){
 
 			var p = window.edit_form3000__data.post;
 			var d = data.data;
-			var f = $('#edit_form3000');
+			
 			
 			p.uuid              = d.uuid;
 			p.uuid_user         = d.uuid_user;
 			p.uuid_user_create  = d.uuid_user_create;
 			p.uuid_user_publish = d.uuid_user_publish;
 			p.edit_type         = d.edit_type;
-
-			f.find('.post_name_heder').val(d.name);
-			f.find('.post_name').val(d.name);
-			f.find('.post_preview').val(d.preview);
-			f.find('.post_text').val(d.text);
-			f.find('.post_tags').val(d.tags);
-			f.find('.edit_type').html(p.edit_type);
 			
-			f.find('.uuid_post').html(p.uuid);
-			f.find('.uuid_user_update').html(p.uuid_user);
-			f.find('.uuid_user_create').html(p.uuid_user_create);
-			f.find('.uuid_user_publish').html(p.uuid_user_publish);
+			p.name = d.name;
+			p.text = d.text;
+			p.preview = d.preview;
+			p.tags = d.tags;
+			p.text = d.text;
+			
+			edit_form3000__setformdata();
 			
 			fn()
 	}).fail(function() {
@@ -157,6 +159,23 @@ function edit_form3000__load_data_fn(fn){
 			fn()
 	})
   },100);
+}
+
+//задаем поля формы из ранее загруженых данных в window.edit_form3000__data.post
+function edit_form3000__setformdata(){
+	var p = window.edit_form3000__data.post;
+	var f = $('#edit_form3000');
+	f.find('.post_name_heder').html(p.name);
+	f.find('.post_name').val(p.name);
+	f.find('.post_preview').val(p.preview);
+	f.find('.post_text').val(p.text);
+	f.find('.post_tags').val(p.tags);
+	f.find('.edit_type').html(p.edit_type);
+	
+	f.find('.uuid_post').html(p.uuid);
+	f.find('.uuid_user_update').html(p.uuid_user);
+	f.find('.uuid_user_create').html(p.uuid_user_create);
+	f.find('.uuid_user_publish').html(p.uuid_user_publish);
 }
 
 //сохранение данных формы
