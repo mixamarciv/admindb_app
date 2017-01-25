@@ -57,6 +57,8 @@ $(document).ready(function(){
 <style>
 ff2 {
 	font-size: 150%;
+	/*font-family: "Arial Black";*/
+	font-family: 'Impact';
 }
 </style>
 
@@ -88,7 +90,7 @@ ff2 {
 	      </ul>
 		  <ul class="nav navbar-nav navbar-right">
 		
-			  {{if and (.user) (.db) }}
+			  {{if and (.user.uuid_user) (.db) }}
 			  <li class="" >
 					<a href="/e?d={{.db.ShortName}}&id=new&user={{.user.uuid_user}}"  class=""
 						data-toggle="tooltip" title="добавить запись" data-original-title="добавить новую запись" > 
