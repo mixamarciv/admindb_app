@@ -1,7 +1,7 @@
 
 {{define "content"}}
 <script language='javascript'>
-window.edit_form3000__data = {load_data:{},save_data:{},publish:{},post:{}}
+window.edit_form3000__data = {load_data:{},save_data:{},publish:{},post:{},publishwork:{}}
 
 $(document).ready(function(){
 	var p = window.edit_form3000__data.post;
@@ -36,6 +36,19 @@ function edit_form3000__show_progress(show,text){
 		$('#edit_form3000_actions').show();
 	}
 }
+
+//выводим прогресс бар для публикации
+function publish_info_show_progress(show,text){
+	if(show==1){
+		$('#publish_info').show();
+		if(!text) text = 'загрузка..';
+		$('#publish_info>.text').html(text);
+	}else{
+		$('#publish_info_progress').hide();
+	}
+}
+
+
 
 //подготовка и загрузка данных формы
 function edit_form3000__load_data(){
@@ -105,12 +118,13 @@ function edit_form3000__publish(){
 	});
 }
 
+
 //вывод сообщения об ошибке
 function show_ajax_error(objselector,data,fn) {
 	if(data["error"]){
 		var errorcode = data["errorcode"];
 		if(!errorcode) errorcode = 'hz';
-		show_msg(objselector,'['+errorcode+'] '+data["error"]+'<code>'+var_dump(data)+'</code>',{type:'error',max_msg_show:2});
+		show_msg(objselector,'['+errorcode+'] '+data["error"]+'<code>'+var_dump(data)+'</code><div class="container"></div>',{type:'error',max_msg_show:2});
 	}
 	if(fn) fn();
 }
@@ -270,6 +284,8 @@ function edit_form3000__publish_fn(fn){
 			
 			show_msg('#edit_form3000_result',msg,{type:'info',max_msg_show:2})
 			
+			edit_form3000__publishwork()
+			
 			return fn()
 	}).fail(function() {
 			var msg = "<b>ВНИМАНИЕ: произошла внутренняя ошибка сервера</b><br> повторите ваш запрос немного позже"
@@ -277,6 +293,74 @@ function edit_form3000__publish_fn(fn){
 			return fn()
 	})
 }
+
+
+//обработка опубликованного поста
+function edit_form3000__publishwork(){
+	publish_info_show_progress(1)
+	var pw = window.edit_form3000__data.publishwork
+	if(!pw.clearinterval){
+		pw.clearinterval = function(){
+			var pw = window.edit_form3000__data.publishwork
+			if(pw.reload_interval){
+				clearInterval(pw.reload_interval);
+				pw.reload_interval = 0;
+			}
+		}
+	}
+	
+
+	var p = window.edit_form3000__data.post;
+
+	var d = {}
+	d.db    = p.db;
+	d.uuid  = p.uuid;
+	d.type  = 'publish';
+	
+	var fn = function(){};
+    $.ajax({
+        type: 'GET'
+        ,url: '/publish?d='+d.db+'&id='+d.uuid+'&type='+d.type
+        //,data: d
+    }).always(function() {
+	}).done(function(data) {
+			if(data["error"]) return show_ajax_error('#publish_info_result',data,fn);
+			
+			var d = data.log_file;
+			if(!d){
+				var msg = "<b>ОШИБКА:</b> не верный формат данных овета[err2] <br><pre>"+var_dump(data)+"</pre> ";
+				show_msg('#publish_info_result',msg,{type:'error',max_msg_show:1})
+				return fn()
+			}
+			
+			pw.clearinterval();
+			pw.reload_interval = setInterval(function(){
+				edit_form3000__publishwork_getinfo(data)
+			}, 1000);			
+	}).fail(function() {
+			var msg = "<b>ВНИМАНИЕ: произошла внутренняя ошибка сервера[err2]</b><br> повторите ваш запрос немного позже"
+			show_msg('#publish_info_result',msg,{is_sys_error:1,max_msg_show:1})
+			return
+	})
+}
+
+//получаем/обновляем информацию об обновлении поста
+function edit_form3000__publishwork_getinfo(pd){
+	var fn = function(){};
+	$.ajax({
+	    type: 'GET',
+	    url: pd.log_file
+	}).always(function() {
+	}).done(function(data) {
+			if(data["error"]) return show_ajax_error('#publish_info_result',data,fn);
+			$('#publish_info_result').html(data)					
+	}).fail(function() {
+			var msg = "<b>ВНИМАНИЕ: произошла внутренняя ошибка сервера[err3]</b><br> повторите ваш запрос немного позже"
+			show_msg('#publish_info_result',msg,{is_sys_error:1,max_msg_show:1})
+			return
+	})
+}
+
 </script>
 
 
@@ -352,6 +436,19 @@ function edit_form3000__publish_fn(fn){
 	    </div>
 	</div>
 	
+	
+	<div id="publish_info"  style="display:none;">
+		<code id="publish_info_result">
+			..load
+		</code>
+		<div id="publish_info_progress">
+			<table border=0 style="background: rgba(0,0,0, 0);padding:0px;margin:0px;"><tr><td>
+			    <img src="/public/img/loading003_16x11.gif" style="padding:15px;marging:15px;">
+			</td><td>
+			    <span class="progress_text">индексация записи</span>
+			</td></tr></table>
+		</div>
+	</div>
 	
 </div>
 

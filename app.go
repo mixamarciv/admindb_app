@@ -42,6 +42,8 @@ func main() {
 	r.HandleFunc("/logout", LogReq(http_logout))
 	r.HandleFunc("/auth_vk", LogReq(http_auth_vk))
 
+	r.HandleFunc("/publish", LogReq(http_publish))
+
 	//вывод
 	r.NotFoundHandler = MakeHttpHandler(LogReq(http_404))
 

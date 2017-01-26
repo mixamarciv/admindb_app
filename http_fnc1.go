@@ -20,6 +20,11 @@ func RenderError(w http.ResponseWriter, r *http.Request, d map[string]interface{
 //возвращает json строку-ответ
 func RenderJson(w http.ResponseWriter, r *http.Request, d map[string]interface{}) {
 	w.Header().Set("Content-Type", "application/json")
+
+	if _, b := d["db"]; b {
+		delete(d, "db")
+	}
+
 	bytes, err := mf.ToJson(d)
 	if err != nil {
 		LogPrintErr("ERROR RenderJson", err)

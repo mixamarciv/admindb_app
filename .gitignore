@@ -13,6 +13,7 @@ templates__old/
 
 /DSG1849852
 public/upload/
+public/publish_log/
 
 public/js/minify.all.js
 public/css/minify.white.css

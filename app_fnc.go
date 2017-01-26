@@ -20,6 +20,11 @@ func GetLoadTime(r *http.Request) time.Duration {
 	return time.Now().Sub(startLoadTime)
 }
 
+func GetLoadTimeStr(r *http.Request) string {
+	startLoadTime := context.Get(r, "startLoadTime").(time.Time)
+	return fmt.Sprintf("%v", time.Now().Sub(startLoadTime))
+}
+
 func GetCtx(r *http.Request, varname string, defaultval interface{}) interface{} {
 	val, ok := context.GetOk(r, varname)
 	if !ok {
