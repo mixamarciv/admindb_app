@@ -41,8 +41,10 @@ function edit_form3000__show_progress(show,text){
 function publish_info_show_progress(show,text){
 	if(show==1){
 		$('#publish_info').show();
-		if(!text) text = 'загрузка..';
-		$('#publish_info>.text').html(text);
+		$('#publish_info_progress').show();
+		if(text){
+			$('#publish_info_result').html(text);
+		}
 	}else{
 		$('#publish_info_progress').hide();
 	}
@@ -297,7 +299,7 @@ function edit_form3000__publish_fn(fn){
 
 //обработка опубликованного поста
 function edit_form3000__publishwork(){
-	publish_info_show_progress(1)
+	publish_info_show_progress(1,"загрузка..")
 	var pw = window.edit_form3000__data.publishwork
 	if(!pw.clearinterval){
 		pw.clearinterval = function(){
@@ -354,8 +356,15 @@ function edit_form3000__publishwork_getinfo(pd){
 	    url: pd.log_file+'?'+pw.ireq++
 	}).always(function() {
 	}).done(function(data) {
-			if(data["error"]) return show_ajax_error('#publish_info_result',data,fn);
-			$('#publish_info_result').html(data)					
+			//if(data["error"]) return show_ajax_error('#publish_info_result',data,fn);
+			$('#publish_info_result').html(data)
+			var search_str = "--==## end ##==--";
+			var i = data.indexOf(search_str,20);
+			if(i>0){
+				var pw = window.edit_form3000__data.publishwork;
+				pw.clearinterval();
+				publish_info_show_progress(0);
+			}
 	}).fail(function() {
 			var msg = "<b>ВНИМАНИЕ: произошла внутренняя ошибка сервера[err3]</b><br> повторите ваш запрос немного позже"
 			show_msg('#publish_info_result',msg,{is_sys_error:1,max_msg_show:1})
