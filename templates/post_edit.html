@@ -306,6 +306,7 @@ function edit_form3000__publishwork(){
 				clearInterval(pw.reload_interval);
 				pw.reload_interval = 0;
 			}
+			pw.ireq = 0; //номер запроса
 		}
 	}
 	
@@ -347,9 +348,10 @@ function edit_form3000__publishwork(){
 //получаем/обновляем информацию об обновлении поста
 function edit_form3000__publishwork_getinfo(pd){
 	var fn = function(){};
+	var pw = window.edit_form3000__data.publishwork;
 	$.ajax({
 	    type: 'GET',
-	    url: pd.log_file
+	    url: pd.log_file+'?'+pw.ireq++
 	}).always(function() {
 	}).done(function(data) {
 			if(data["error"]) return show_ajax_error('#publish_info_result',data,fn);
