@@ -143,12 +143,14 @@ func RenderTemplate(w http.ResponseWriter, r *http.Request, d map[string]interfa
 	//--------------------------------------------------------------------------
 	//собираем все файлы в один шаблон
 	var t *template.Template
-	for _, file := range filenames {
+	for ifile, file := range filenames {
 		template_file := apppath + "/templates/" + file
 		template_text, err := ioutil.ReadFile(template_file)
 		if err != nil {
-			ShowError("RenderTemplate: read template file error", err, w, r)
-			return
+			//ShowError("RenderTemplate: read template file error", err, w, r)
+			//return
+			template_text = []byte(file)
+			file = itoa(ifile)
 		}
 		s := string(template_text)
 

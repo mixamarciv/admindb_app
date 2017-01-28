@@ -53,7 +53,7 @@ func http_publish(w http.ResponseWriter, r *http.Request) {
 //запускает http_publish__publish для каждого поста бд
 func http_publish__publish_all(w http.ResponseWriter, r *http.Request, d map[string]interface{}) {
 	//получаем данные обновляемых постов
-	query := `SELECT p.uuid FROM tpost p WHERE p.uuid IS NOT NULL AND p.edit_type='publish' `
+	query := `SELECT p.uuid FROM tpost p WHERE p.uuid IS NOT NULL AND p.edit_type='publish' ORDER BY p.create_date`
 	rows := run_db_query(d, query)
 	if rows == nil {
 		return

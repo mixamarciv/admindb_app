@@ -2,67 +2,97 @@
 {{define "content"}}
 <script language='javascript'>
 
+window.search_form3000__data = {load_data:{},progressbar:{}}
+
 $(document).ready(function(){
+	var sd = window.search_form3000__data;
+	sd.db = '{{.db.ShortName}}';
+	
 	var f = $('#search_form3000');
 	
-	
-	$('#s_search_input3000').on('keyup',prepare_send_search_query3000);
-	/****
-	function(){
-		if(window.s_search_form.load){
-			window.s_search_form.wait = 1;
-			return
-		}
-		window.s_search_form.load = 1;
-		
-		$('#search_form_progress3000').animate({height:100},100)
-		setTimeout(function(){
-			if(window.s_search_form.wait)
-			window.s_search_form.load = 0;
-			$('#search_form_progress3000').animate({height:0},100)
-		},2000);
-	}
-	****/
+	$('#s_search_input3000').on('keyup',search_form3000__load_data);
+	$('#s_search_input3000').on('keydown',search_form3000__load_data);
 })
 
-window.s_search_form = {}
-function prepare_send_search_query3000(){
-	var search_text = $('#s_search_input3000').val()
-	search_text = search_text.trim()
-	if(window.s_search_form.cur_search_text==search_text){
-		return
-	}
-	
-	if(window.s_search_form.load){
-		window.s_search_form.wait = 1;
-		return
-	}
-	window.s_search_form.load = 1;
-	
-	$('#search_form_progress3000').animate({height:60,padding:0,"padding-right":100,"padding-left":50},100)
-	
-	search_info = 'загрузка "'+search_text+'"'
-	if(search_text==''){
-		search_info = 'загрузка всех записей'
-	}
-	$('#search_form_progress_search_text').html(search_info)
-
-	window.s_search_form.cur_search_text = search_text
-	send_search_query3000(function(){
-		window.s_search_form.load = 0;
-		if(window.s_search_form.wait){
-			window.s_search_form.wait = 0;
-			return prepare_send_search_query3000()
+//выводим прогресс бар загрузки
+function search_form3000__show_progress(show,text){
+	var p = window.search_form3000__data.progressbar;
+	if(show==1){
+		p.wait_for_hide = 0;
+		$('#search_form_progress3000').animate({height:60,padding:0,"padding-right":100,"padding-left":50},200)
+		search_info = 'загрузка "'+text+'"'
+		if(text==''){
+			search_info = 'загрузка всех записей'
 		}
-		$('#search_form_progress3000').animate({height:0,padding:0},100)
+		$('#search_form_progress_search_text').html(search_info)
+	}else{
+		p.wait_for_hide = 1;
+		setTimeout(function(){
+			var tp = window.search_form3000__data.progressbar;
+			if(tp.wait_for_hide==0) return;
+			tp.wait_for_hide = 0;
+			$('#search_form_progress3000').animate({height:0,padding:0},300)
+		},2000);
+	}
+}
+
+
+//пред обработка поиска
+function search_form3000__load_data(){
+	var d = window.search_form3000__data.load_data;
+	
+	var search_text = $('#s_search_input3000').val();
+	search_text = search_text.trim()
+	
+	if(d.prev_search_text==search_text){
+		d.wait = 0;
+		return
+	}	
+	
+	if(d.load){
+		d.wait = 1;
+		return
+	}
+	d.load = 1;
+		
+	search_form3000__show_progress(1,search_text)
+	search_form3000__load_data_fn(search_text,function(){
+		var d = window.search_form3000__data.load_data;
+		d.load = 0;
+		if(d.wait){
+			d.wait = 0;
+			return search_form3000__load_data()
+		}
+		search_form3000__show_progress(0)
 	});
 }
 
-function send_search_query3000(fn){
+function search_form3000__load_data_fn(search_text,fn){
+	var d = window.search_form3000__data.load_data;
+	d.prev_search_text = search_text;
+	
+	//запускаем запрос на обработку
 	setTimeout(function(){
-		fn()
-	},2000);	
+		var d  = window.search_form3000__data.load_data;
+		var sd = window.search_form3000__data;
+		var q = {d:sd.db, s:search_text}
+	    $.ajax({
+	        type: 'GET',
+	        url: '/sq',
+	        data: q
+	    }).always(function() {
+		}).done(function(data) {
+			//alert(var_dump(data.data))
+			$('#search_form_data3000').html(data)
+			fn()
+		}).fail(function() {
+			var msg = "<b>ВНИМАНИЕ: произошла внутренняя ошибка сервера</b><br> повторите ваш запрос немного позже"
+			show_msg('#search_form_data3000',msg,{is_sys_error:1,max_msg_show:1})
+			fn()
+		})
+	},10);
 }
+
 </script>
 
 
@@ -76,22 +106,24 @@ function send_search_query3000(fn){
 	padding:1px;
 	padding-bottom:10px;
 }
+/*bg color: #272b30*/
 
 #search_form_progress3000 {
 	position:absolute;
 	padding: 0px;
 	margin: 0px;
-	margin-right: 30px;
+	margin-right: 0px;
 	height:0px;
 	z-index:87;
 	overflow:hidden;
 	width:350px;
 	
-	border: 0px solid #070b10; /*#272b30*/
+	border: 0px solid #070b10; 
 	border-top: 0px;
 	background: rgba(39,43,48, 0.5);
 	border-radius: 0px 0px 15px 15px;
 }
+
 .search_form_progress3000_1 {
 	position:absolute;
 	left:0px;
@@ -105,11 +137,12 @@ function send_search_query3000(fn){
 	margin-top: 0px;
 	margin-right: 0px;
 
-	border: 0px solid #070b10; /*#272b30*/
+	border: 0px solid #070b10; 
 	border-top: 0px;
-	background: rgba(39,43,48, 0.7);
-	border-radius: 0px 0px 15px 15px;
+	/*background: rgba(39,43,48, 0.7);*/
+	/*border-radius: 0px 0px 15px 15px;*/
 }
+
 .search_form_progress3000_2 {
 	position:absolute;
 	left:0px;
@@ -121,7 +154,7 @@ function send_search_query3000(fn){
 	padding-top:0px;
 	margin: 8px;
 	margin-top: 0px;
-	margin-right: 0px;
+	/*margin-right: 0px;*/
 
 	border: 1px solid #070b10; /*#272b30*/
 	border-top: 0px;
@@ -169,7 +202,7 @@ function send_search_query3000(fn){
 {{else}}
 <div class="form-group">
   <div class="input-group" id="search_form3000">
-    <input type="text" class="form-control input-lg s_search_input3000" id="s_search_input3000">
+    <input type="text" class="form-control input-lg s_search_input3000" id="s_search_input3000" value="{{if .get_vars.s}}{{index .get_vars.s 0}}{{end}}">
     <span class="input-group-btn">
       <button class="btn btn-default input-lg" type="button"><big><big> &nbsp; поиск &nbsp; </big></big></button>
     </span>

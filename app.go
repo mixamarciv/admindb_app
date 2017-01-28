@@ -33,6 +33,8 @@ func main() {
 	r.HandleFunc("/main", LogReq(http_main))
 
 	r.HandleFunc("/s", LogReq(http_search))
+	r.HandleFunc("/sq", LogReq(http_searchq))
+
 	r.HandleFunc("/p", LogReq(http_post_view))
 
 	r.HandleFunc("/e", LogReq(http_post_edit))
