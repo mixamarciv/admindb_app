@@ -50,18 +50,23 @@
 </div>
 
 <div class="container" style="display:none0;"> 
-	<a href="https://oauth.vk.com/authorize?client_id=5802778&scope=&redirect_uri=http://{{.http_request.host}}/auth_vk&response_type=code"
+<br>
+<center>
+	<a href="https://oauth.vk.com/authorize?client_id=5846108&scope=&redirect_uri=http://{{.http_request.host}}/auth_vk&response_type=code"
 	   class="btn btn-primary">
 	{{if .sess.user}}повторная{{end}} авторизация через вк
 	</a>
-	
+	<br><br><br>
 	<a href="/logout?1"
 	   class="btn btn-primary">
 	выход
 	</a>
+</center>
 </div>
 
+
 {{if .success }}
+<br>
 <div class="container"><div class="alert alert-dismissible alert-success">
 	  	<button type="button" class="close" data-dismiss="alert">&times;</button>
 	  	<strong>{{.success}}</strong>
@@ -69,6 +74,10 @@
 {{end}}
 
 <br><br>
-<pre>{{.sess}}</pre>
+<!--
+<pre>{ {.sess} }</pre>
+
+<pre>{ {dump_spew2 . 2 "\t"} }</pre>
+-->
 
 {{end}}
