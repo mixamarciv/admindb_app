@@ -17,8 +17,23 @@ $(document).ready(function(){
 //выводим прогресс бар загрузки
 function search_form3000__show_progress(show,text){
 	var p = window.search_form3000__data.progressbar;
+	if(!p.start_hide){
+		p.start_hide = function(){
+			p.hide_timeout_id = setTimeout(function(){
+				$('#search_form_progress3000').animate({height:0,padding:0},300)
+				p.stop_hide()
+			},700);
+		}
+		p.stop_hide = function(){
+			if(!p.hide_timeout_id) return
+			clearTimeout(p.hide_timeout_id)
+			p.hide_timeout_id = 0;
+		}
+	}
+
 	if(show==1){
-		p.wait_for_hide = 0;
+		p.stop_hide()
+		
 		$('#search_form_progress3000').animate({height:60,padding:0,"padding-right":100,"padding-left":50},200)
 		search_info = 'загрузка "'+text+'"'
 		if(text==''){
@@ -26,13 +41,7 @@ function search_form3000__show_progress(show,text){
 		}
 		$('#search_form_progress_search_text').html(search_info)
 	}else{
-		p.wait_for_hide = 1;
-		setTimeout(function(){
-			var tp = window.search_form3000__data.progressbar;
-			if(tp.wait_for_hide==0) return;
-			tp.wait_for_hide = 0;
-			$('#search_form_progress3000').animate({height:0,padding:0},300)
-		},2000);
+		p.start_hide()
 	}
 }
 

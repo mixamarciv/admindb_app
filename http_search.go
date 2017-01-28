@@ -199,12 +199,12 @@ func http_search__get_filter(w http.ResponseWriter, r *http.Request, d map[strin
 	s = strings.ToLower(s)
 
 	//разбиваем текст на искомые выражения
-	re := regexp.MustCompile("[^a-zа-я0-9\\!=]+")
+	re := regexp.MustCompile("[^a-zа-я0-9_\\!=]+")
 	a := re.Split(s, -1)
 	sw := make(map[string]int) //список искомых выражений
 	cnt := 0
 
-	re_test := regexp.MustCompile("[a-zа-я0-9]{2,}$") //проверка на длину минимум в 2 символа
+	re_test := regexp.MustCompile("[a-zа-я0-9_]{2,}$") //проверка на длину минимум в 2 символа
 
 	for _, w := range a {
 		w = strings.Trim(w, "\t\r\n\f\v ")

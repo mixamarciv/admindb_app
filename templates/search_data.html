@@ -1,10 +1,17 @@
 
 {{define "search_data"}}
     <!--code>{ {.query } }</code-->
+
 	<div class="container">
 			<div class="col-md-9">{{.info_search_text}}</div>
 			<div class="col-md-3"><small>{{ floadTime }}</small></div>
 	</div>
+	
+	<div class="container">
+			<div class="col-md-6" id="info_debug1"></div>
+			<div class="col-md-6" id="info_debug2"></div>
+	</div>
+	
 	{{$dbtype := .db.ShortName}}
 	{{if .data }}
 	<div class="list-group">

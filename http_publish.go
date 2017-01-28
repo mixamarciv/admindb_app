@@ -140,7 +140,7 @@ func http_publish__publish(w http.ResponseWriter, r *http.Request, d map[string]
 	//далее формируем эти логи:
 	write_fnc_log(r, d, mf.CurTimeStr()+"  start update")
 	{
-		re := regexp.MustCompile("[^a-zа-я0-9]+")
+		re := regexp.MustCompile("[^a-zа-я0-9_]+")
 		m := make(map[string]map[string]int)
 		k := make(map[string]int)
 
