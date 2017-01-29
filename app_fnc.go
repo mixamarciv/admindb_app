@@ -53,7 +53,7 @@ func LogReq(f func(http.ResponseWriter, *http.Request)) func(http.ResponseWriter
 
 		f(w, r)
 
-		LogPrint(fmt.Sprintf(mf.CurTimeStrRFC3339()+" -> "+r.URL.Scheme+" "+r.URL.Path+"?"+r.URL.RawQuery+"  %v ", GetLoadTime(r)))
+		LogPrint(mf.CurTimeStrRFC3339() + " -> " + r.URL.Scheme + " " + r.URL.Path + "?" + r.URL.RawQuery + sprintf("  %v ", GetLoadTime(r)))
 		context.Clear(r)
 	}
 }

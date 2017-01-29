@@ -31,6 +31,7 @@ func main() {
 	//r.HandleFunc("/main", http_sess_handler)
 	r.HandleFunc("/", LogReq(http_main))
 	r.HandleFunc("/main", LogReq(http_main))
+	r.HandleFunc("/admin", LogReq(http_admin))
 
 	r.HandleFunc("/s", LogReq(http_search))
 	r.HandleFunc("/sq", LogReq(http_searchq))

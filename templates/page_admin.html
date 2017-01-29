@@ -1,0 +1,66 @@
+{{define "content"}}
+
+{{if .msg }}
+<div class="alert alert-dismissible alert-warning">
+	<button type="button" class="close" data-dismiss="alert">&times;</button>
+	<h4>Warning!</h4>
+	<p>{{.msg}}</p>
+</div>
+{{end}}
+{{if .err }}
+<div class="container"><div class="alert alert-dismissible alert-danger">
+	<button type="button" class="close" data-dismiss="alert">&times;</button>
+	<strong>{{.err}}</strong>
+</div></div>
+{{end}}
+{{if .error }}
+<div class="container"><div class="alert alert-dismissible alert-danger">
+	<button type="button" class="close" data-dismiss="alert">&times;</button>
+	<strong>{{.error}}</strong>
+</div></div>
+{{end}}
+{{if .success }}
+<br>
+<div class="container"><div class="alert alert-dismissible alert-success">
+	  	<button type="button" class="close" data-dismiss="alert">&times;</button>
+	  	<strong>{{.success}}</strong>
+</div></div>
+{{end}}
+
+
+<div class="container">
+  <div class="row">
+	<h4>переиндексация всех записей бд:
+	<small><br>ВНИМАНИЕ: индексация начнется сразу после нажатия и я хз как её остановить</small>
+	</h4>
+	
+	<div class="list-group">
+	      <a href="/publish?d=a&id=all&type=publish" class="list-group-item">
+	      <h3 class="list-group-item-heading"><b>Ад</b>министрирование 
+		  </h3>
+	      </a>
+	      <a href="/publish?d=p&id=all&type=publish" class="list-group-item">
+	      <h3 class="list-group-item-heading">Программирование 
+		  </h3>
+	      </a>
+	      <a href="/publish?d=w&id=all&type=publish" class="list-group-item">
+	      <h3 class="list-group-item-heading">Варез
+		  </h3>
+	      </a>
+	</div>
+
+  </div>
+</div>
+
+
+
+
+
+<br><br>
+<!--
+<pre>{ {.sess} }</pre>
+
+<pre>{ {dump_spew2 . 2 "\t"} }</pre>
+-->
+
+{{end}}

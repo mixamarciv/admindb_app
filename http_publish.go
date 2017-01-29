@@ -52,8 +52,11 @@ func http_publish(w http.ResponseWriter, r *http.Request) {
 
 //запускает http_publish__publish для каждого поста бд
 func http_publish__publish_all(w http.ResponseWriter, r *http.Request, d map[string]interface{}) {
+	start_time := time.Now()
+	LogPrint("start index all records")
+
 	//получаем данные обновляемых постов
-	query := `SELECT p.uuid FROM tpost p WHERE p.uuid IS NOT NULL AND p.edit_type='publish' ORDER BY p.create_date`
+	query := `SELECT p.uuid FROM tpost p WHERE p.uuid IS NOT NULL AND p.edit_type='publish' ORDER BY p.date_create`
 	rows := run_db_query(d, query)
 	if rows == nil {
 		return
@@ -62,6 +65,7 @@ func http_publish__publish_all(w http.ResponseWriter, r *http.Request, d map[str
 	//a := make([]string, 0)
 	d["publis_all"] = 1
 	get_vars := d["get_vars"].(url.Values)
+	cnt := 0
 	for rows.Next() {
 		var id string
 		if err := rows.Scan(&id); err != nil {
@@ -74,9 +78,11 @@ func http_publish__publish_all(w http.ResponseWriter, r *http.Request, d map[str
 		d["get_vars"] = get_vars
 
 		http_publish__publish(w, r, d)
-
+		cnt++
 	}
 	rows.Close()
+
+	LogPrint(sprintf("end index all records: %d  time: %v", cnt, time.Now().Sub(start_time)))
 }
 
 //сохраняем слова и количество их повторений из поста в таблицы tword и tword_post
@@ -86,6 +92,8 @@ func http_publish__publish(w http.ResponseWriter, r *http.Request, d map[string]
 	//LogPrint("=====================================================================")
 	//LogPrint(fmt.Sprintf("%#v", r.Form))
 	//LogPrint("=====================================================================")
+	start_time := time.Now()
+
 	_, publis_all := d["publis_all"]
 	get_vars := d["get_vars"].(url.Values)
 	uuid := http_get_var_str_sql(get_vars, "id", "")
@@ -188,7 +196,10 @@ func http_publish__publish(w http.ResponseWriter, r *http.Request, d map[string]
 		write_fnc_log(r, d, mf.CurTimeStr()+"  exec updates db sql query")
 	}
 	write_fnc_log(r, d, mf.CurTimeStr()+"  end update")
+
+	LogPrint("end index record: " + uuid + sprintf("  time: %v", time.Now().Sub(start_time)))
 	write_fnc_log_row(r, d, "--==## end ##==--")
+
 	return
 }
 
@@ -209,7 +220,7 @@ func write_fnc_log_row(r *http.Request, d map[string]interface{}, s string) {
 
 //разбиваем s на слова согласно указанному регулярному выражению
 func http_publish__get_words(re *regexp.Regexp, s string) map[string]int {
-	s = mf.StrRegexpReplace(s, "<\\/?[a-z]+.*>", "")
+	s = mf.StrRegexpReplace(s, "<\\/?[a-z]+[^>]*>", "")
 	s = strings.ToLower(s)
 	a := re.Split(s, -1)
 	words := make(map[string]int)
@@ -223,6 +234,9 @@ func http_publish__get_words(re *regexp.Regexp, s string) map[string]int {
 		}
 		if re_test.MatchString(w) {
 			continue
+		}
+		if len(w) >= 100 {
+			w = w[:99]
 		}
 		words[w] = words[w] + 1
 		cnt++
