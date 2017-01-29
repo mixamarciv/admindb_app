@@ -85,7 +85,7 @@ function edit_form3000__save_data(){
 	d.load = 1;
 	
 	edit_form3000__show_progress(1)
-	edit_form3000__save_data_fn(function(){
+	edit_form3000__save_data_fn(function(isok){
 		var d = window.edit_form3000__data.save_data;
 		d.load = 0;
 		if(d.wait){
@@ -93,7 +93,7 @@ function edit_form3000__save_data(){
 			return edit_form3000__save_data()
 		}
 		//edit_form3000__show_progress(0)
-		edit_form3000__load_data()
+		if(isok) edit_form3000__load_data()
 	});
 }
 
@@ -108,7 +108,7 @@ function edit_form3000__delete_data(){
 	d.load = 1;
 	
 	edit_form3000__show_progress(1)
-	edit_form3000__delete_data_fn(function(){
+	edit_form3000__delete_data_fn(function(isok){
 		var d = window.edit_form3000__data.delete_data;
 		d.load = 0;
 		if(d.wait){
@@ -116,7 +116,7 @@ function edit_form3000__delete_data(){
 			return edit_form3000__delete_data()
 		}
 		//edit_form3000__show_progress(0)
-		edit_form3000__load_data()
+		if(isok) edit_form3000__load_data()
 	});
 }
 
@@ -131,7 +131,7 @@ function edit_form3000__publish(){
 	d.load = 1;
 	
 	edit_form3000__show_progress(1)
-	edit_form3000__publish_fn(function(){
+	edit_form3000__publish_fn(function(isok){
 		var d = window.edit_form3000__data.publish;
 		d.load = 0;
 		if(d.wait){
@@ -139,7 +139,7 @@ function edit_form3000__publish(){
 			return edit_form3000__publish()
 		}
 		//edit_form3000__show_progress(0)
-		edit_form3000__load_data()
+		if(isok) edit_form3000__load_data()
 	});
 }
 
@@ -191,7 +191,7 @@ function edit_form3000__load_data_fn(fn){
 			
 			edit_form3000__setformdata();
 			
-			fn()
+			fn(1)
 	}).fail(function() {
 			var msg = "<b>ВНИМАНИЕ: произошла внутренняя ошибка сервера</b><br> повторите ваш запрос немного позже"
 			show_msg('#edit_form3000_result',msg,{is_sys_error:1,max_msg_show:1})
@@ -259,7 +259,7 @@ function edit_form3000__save_data_fn(fn){
 			
 			show_msg('#edit_form3000_result',msg,{type:'info',max_msg_show:2})
 			
-			return fn()
+			return fn(1)
 	}).fail(function() {
 			var msg = "<b>ВНИМАНИЕ: произошла внутренняя ошибка сервера</b><br> повторите ваш запрос немного позже"
 			show_msg('#edit_form3000_result',msg,{is_sys_error:1,max_msg_show:1})
@@ -308,7 +308,7 @@ function edit_form3000__delete_data_fn(fn){
 			
 			show_msg('#edit_form3000_result',msg,{type:'info',max_msg_show:2})
 			
-			return fn()
+			return fn(1)
 	}).fail(function() {
 			var msg = "<b>ВНИМАНИЕ: произошла внутренняя ошибка сервера</b><br> повторите ваш запрос немного позже"
 			show_msg('#edit_form3000_result',msg,{is_sys_error:1,max_msg_show:1})
@@ -360,7 +360,7 @@ function edit_form3000__publish_fn(fn){
 			
 			edit_form3000__publishwork()
 			
-			return fn()
+			return fn(1)
 	}).fail(function() {
 			var msg = "<b>ВНИМАНИЕ: произошла внутренняя ошибка сервера</b><br> повторите ваш запрос немного позже"
 			show_msg('#edit_form3000_result',msg,{is_sys_error:1,max_msg_show:1})

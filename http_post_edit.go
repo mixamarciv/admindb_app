@@ -97,7 +97,8 @@ func http_post_edit__load_data_fn(w http.ResponseWriter, r *http.Request, d map[
 		dr["date_create"] = ""
 		dr["date_modify"] = ""
 		dr["edit_type"] = "new"
-		dr["uuid"] = mf.StrUuid()
+		dr["uuid"] = strings.Replace(mf.StrUuid(), "-", "", -1)
+		LogPrint("gen new uuid: " + dr["uuid"].(string))
 		d["data"] = dr
 		return
 	}
@@ -289,11 +290,11 @@ func http_post_edit__save_data(w http.ResponseWriter, r *http.Request, d map[str
 		//если пользователь создает новую запись то создаем его версию этой записи
 		data["edit_type"] = "create"
 		query = `INSERT INTO TPOST(NAME,TAGS,TEXT,PREVIEW,UUID_USER,
-				   DATE_CREATE,uuid_user_create,
+				   DATE_CREATE,
 				   UUID/*,UUID_USER_PUBLISH*/,EDIT_TYPE,UUID_USER_CREATE
 				   )
 			    VALUES('` + name + `','` + tags + `','` + text + `','` + preview + `','` + uuid_user_this + `',
-				   (SELECT MIN(date_create) FROM tpost WHERE uuid='` + uuid + `'),(SELECT MIN(uuid_user_create) FROM tpost WHERE uuid='` + uuid + `'),
+				   (SELECT MIN(date_create) FROM tpost WHERE uuid='` + uuid + `'),
 				   '` + uuid + `'/*,'` + uuid_user_this + `'*/,'` + data["edit_type"].(string) + `','` + uuid_user_this + `'
 				   )`
 	}

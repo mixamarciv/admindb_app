@@ -1,0 +1,6 @@
+SELECT 'INSERT INTO TPOST (NAME, TAGS, TEXT, UUID_USER, DATE_MODIFY, DATE_CREATE, UUID) VALUES ('''||
+        replace(name,  '''', '''''')||''','''||replace(tags,  '''', '''''')||''','''||replace(text,  '''', '''''')||''','||
+        '''0'','''||date_modify||''','''||COALESCE(date_create,date_modify)||''','''||uuid_to_char(GEN_UUID())||''');
+        '
+FROM app1_post
+ORDER BY date_create

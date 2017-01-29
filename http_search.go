@@ -99,12 +99,12 @@ func http_search__load_data(w http.ResponseWriter, r *http.Request, d map[string
 
 	query :=
 		`SELECT FIRST ` + str_first + ` SKIP ` + str_skip +
-			` p.name,p.tags,p.preview,p.text,p.uuid_user,LEFT(p.date_create,16),p.uuid,` +
+			` p.name,p.tags,p.preview,p.text,p.uuid_user,LEFT(p.date_create,16),LEFT(p.date_modify,16),p.uuid,` +
 			` ` + cnt_select + ` AS cnt` +
 			` FROM tpost p` + "\n" +
 			` ` + join_filter + "\n" +
 			` WHERE p.edit_type='publish'` +
-			` ORDER BY p.date_create DESC`
+			` ORDER BY p.date_modify DESC`
 
 	/******************
 	//в итоге запрос должен быть вида:
@@ -141,9 +141,9 @@ func http_search__load_data(w http.ResponseWriter, r *http.Request, d map[string
 	data_rows := make([]map[string]string, 0)
 	cnt := 0
 	for rows.Next() {
-		var name, tags, preview, text, uuid_user, date_create, uuid NullString
+		var name, tags, preview, text, uuid_user, date_create, date_modify, uuid NullString
 		var sum_weight_words int
-		if err := rows.Scan(&name, &tags, &preview, &text, &uuid_user, &date_create, &uuid, &sum_weight_words); err != nil {
+		if err := rows.Scan(&name, &tags, &preview, &text, &uuid_user, &date_create, &date_modify, &uuid, &sum_weight_words); err != nil {
 			d["error"] = fmtError("http_search__load_data ERROR002 rows.Scan: query:\n"+query+"\n\n", err)
 			return
 		}
@@ -179,6 +179,7 @@ func http_search__load_data(w http.ResponseWriter, r *http.Request, d map[string
 
 		dr["uuid_user"] = uuid_user.get("")
 		dr["date_create"] = date_create.get("")
+		dr["date_modify"] = date_modify.get("")
 		dr["uuid"] = uuid.get("")
 		data_rows = append(data_rows, dr)
 	}
