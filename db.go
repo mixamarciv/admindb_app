@@ -7,6 +7,8 @@ import (
 
 	_ "github.com/nakagami/firebirdsql"
 
+	include_path "path"
+
 	//s "strings"
 	"fmt"
 	"io"
@@ -94,7 +96,7 @@ func conn_to_db(shortName, name, path string, NeedAuth bool) *DBd {
 	dbd := new(DBd)
 	dbd.Name = name
 	dbd.ShortName = shortName
-	dbd.Path = path
+	dbd.Path = include_path.Base(path)
 	dbd.NeedAuth = NeedAuth
 	//path = "d/program/go/projects/test_martini_app/db/DB1.FDB"
 	dbopt := "sysdba:" + gcfg_db_pass + "@127.0.0.1:3050/" + path

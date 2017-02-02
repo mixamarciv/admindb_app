@@ -14,22 +14,57 @@
 </style>
 
 
+
+{{mset "errisshow" "0"}}
+
 {{if .err }}
-<code class="container"> {{.err}} </code>
+	{{mset "errisshow" "1"}}
+	<code class="container"> {{.err}} </code>
+	<div class="row"><div class="col-md-12 post_text debug3000">
+	{{dump_spew2 . 2 "\t"}}
+	</div></div>
 {{end}}
 
 
-{{if .errorcode }}
-<h1 class="container">ERROR: <b>{{.errorcode}}</b> </h1>
+
+{{if eq .errorcode "noauth" }}
+	{{mset "errisshow" "1"}}
+	<h1 class="container">Вы не авторизованы</h1>
+	<h2>у анонимных пользователей нет доступа к этому разделу</h2>
+	<h2 class="container"><a href="/login?nuladno">авторизуйтесь</a></h2>
 {{end}}
 
-{{if .error }}
-<code class="container"> {{.error}} </code>
+
+
+{{if eq .errorcode "dbnoaccess" }}
+	{{mset "errisshow" "1"}}
+	<h1 class="container">нет доступа</h1>
+	{{if .sess.user.name }}
+		<h2>для доступа к этой бд <a href="https://vk.com/mixamarciv">напишите администратору</a></h2>
+	{{else}}
+		<h2>у анонимных пользователей нет доступа к этому разделу</h2>
+		<h2 class="container"><a href="/login?nuladno">авторизуйтесь</a></h2>
+	{{end}}
 {{end}}
 
 
-<div class="row"><div class="col-md-12 post_text debug3000">
-{{dump_spew2 . 2 "\t"}}
-</div></div>
-	
+
+{{if eq .errorcode "noauth2" }}
+	{{mset "errisshow" "1"}}
+	<h1 class="container">ERROR: <b>{{.errorcode}}</b> </h1>
+{{end}}
+
+
+
+{{$test := mget "errisshow" }}
+{{if eq $test "0" }}
+	<h1 class="container">ERROR: <b>{{.errorcode}}</b> </h1>
+	<code class="container"> {{.error}} </code>
+	<div class="row"><div class="col-md-12 post_text debug3000">
+	{{dump_spew2 . 2 "\t"}}
+	</div></div>
+{{end}}
+
+
+
 {{end}}
