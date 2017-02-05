@@ -58,11 +58,11 @@
 </div>
 
 
-
+{{if and .data .data.text}}
 <div class="row"><div class="col-md-12 post_text">
 {{unsafeHtmlPost .data.text}}
 </div></div>
-
+{{end}}
 <!--
 <div class="row"><div class="col-md-12 post_text">
 {{.data.text_html}}

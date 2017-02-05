@@ -49,6 +49,22 @@
 
 
 
+{{if eq .errorcode "postnotfound" }}
+	{{mset "errisshow" "1"}}
+	<h1 class="container">запись не найдена</h1>
+	<h4>{{.error}}</h4>
+{{end}}
+
+
+
+{{if eq .errorcode "dbnotfound" }}
+	{{mset "errisshow" "1"}}
+	<h1 class="container">ОШИБКА: не верно указаны параметры http запроса</h1>
+	<h4>не верно задан параметр подключения к БД</h4>
+{{end}}
+
+
+
 {{if eq .errorcode "noauth2" }}
 	{{mset "errisshow" "1"}}
 	<h1 class="container">ERROR: <b>{{.errorcode}}</b> </h1>

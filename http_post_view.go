@@ -22,6 +22,10 @@ func http_post_view(w http.ResponseWriter, r *http.Request) {
 	}
 
 	http_post_view__load_data(w, r, d)
+	if d["error"] != nil {
+		RenderError(w, r, d)
+		return
+	}
 
 	RenderTemplate(w, r, d, "maintemplate.html", "post_view.html")
 }
@@ -38,7 +42,6 @@ func http_post_view__load_data(w http.ResponseWriter, r *http.Request, d map[str
 	if id == "" {
 		d["error"] = fmt.Errorf("%s", "не верно указан/не указан GET параметр \"id\"")
 		d["errorcode"] = "nogetparam"
-		RenderError(w, r, d)
 		return
 	}
 
@@ -77,6 +80,12 @@ func http_post_view__load_data(w http.ResponseWriter, r *http.Request, d map[str
 		d["data"] = dr
 	}
 	rows.Close()
+
+	if cnt == 0 {
+		d["error"] = "запрашиваемая запись \"" + id + "\" не найдена"
+		d["errorcode"] = "postnotfound"
+		return
+	}
 
 	return
 }
