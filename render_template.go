@@ -30,8 +30,8 @@ func RenderTemplate(w http.ResponseWriter, r *http.Request, d map[string]interfa
 	}
 
 	//--------------------------------------------------------------------------
+	sess := GetSess(w, r)
 	//объявляем функции которые будут использоваться в шаблонах
-	s := GetSess(w, r)
 	var funcs template.FuncMap
 	{
 		m := make(map[string]string) //глобальная переменная которая будет доступна во всех шаблонах через mget mset
@@ -45,7 +45,7 @@ func RenderTemplate(w http.ResponseWriter, r *http.Request, d map[string]interfa
 			},
 			//возвращает значение переменной сессии
 			"fsess": func(name, defaultval string) interface{} {
-				return GetSessVal(s, name, defaultval)
+				return GetSessVal(sess, name, defaultval)
 			},
 			//возвращает значение переменной контекста
 			"fctx": func(name, defaultval string) interface{} {
@@ -110,7 +110,7 @@ func RenderTemplate(w http.ResponseWriter, r *http.Request, d map[string]interfa
 		//копируем значения всех переменных текущей сессии
 		//ещё и преобразуем их из json строки в map[string]interface{}
 		allsessvars := make(map[interface{}]interface{})
-		for k, v := range s.Values {
+		for k, v := range sess.Values {
 			str, ok := v.(string)
 			if ok {
 				t, err := mf.FromJson([]byte(str))
@@ -125,14 +125,32 @@ func RenderTemplate(w http.ResponseWriter, r *http.Request, d map[string]interfa
 
 		}
 
-		//и задаем значения для переменных по умолчанию (если они не заданы)
-		for k, v := range gcfg_default_session_data {
-			if _, b := allsessvars[k]; !b {
-				allsessvars[k] = v
-			}
-		}
-		d["sess"] = allsessvars
+		//и задаем значения для переменных сессии по умолчанию (если они не заданы)
+		{
+			need_save_sess := false
+			for k, v := range gcfg_default_session_data {
+				if _, b := allsessvars[k]; !b { //если в текущих переменных сессии значение не задано
+					need_save_sess = true //то сохраняем все текущие значения переменных в текущей сессии
 
+					var val interface{}
+
+					f, fb := v.(func() string)
+					if fb { //если это функция то вызываем её для получения значения переменной текущей сессии
+						val = f()
+					} else {
+						val = v
+					}
+
+					sess.Values[k] = val
+					allsessvars[k] = val
+				}
+			}
+			if need_save_sess {
+				LogPrint("save sess (new vars)")
+				sess.Save(r, w)
+			}
+			d["sess"] = allsessvars
+		}
 	}
 
 	//в d["ctx"] сохраняем значения всех переменных контекста

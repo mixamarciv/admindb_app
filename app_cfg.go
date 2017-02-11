@@ -1,6 +1,8 @@
 package main
 
 import (
+	"strings"
+
 	mf "github.com/mixamarciv/gofncstd3000"
 )
 
@@ -9,7 +11,7 @@ var gcfg_debug = map[string]int{"render_template": 1}
 
 //глобальные переменные на весь проект
 var gcfg_db_pass = "masterkey"
-var gcfg_webserver_port = "80"
+var gcfg_webserver_port = "5080"
 
 var gcfg_secret_email_pass string = "AsPeefW2m42i03yqVB9f123"
 
@@ -19,7 +21,15 @@ var gcfg_secret_cookie_key = "qwer1234"
 //емеил на который будут уходить сообщения с сайта
 var gcfg_work_emails = []string{"mixamarciv@gmail.com"}
 
-var gcfg_default_session_data = map[string]interface{}{"style": "dark"}
+var gcfg_default_session_data = map[string]interface{}{
+	"style": "dark",
+	"startsess": func() string {
+		str := mf.CurTimeStrShort()
+		str = strings.Replace(str, "-", "", -1)
+		str = str[2:]
+		return str
+	},
+}
 
 //количество сообщений на одной странице
 var gcfg_cnt_messages_on_page = 8

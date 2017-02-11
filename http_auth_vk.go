@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"net/url"
 
-	"strconv"
+	//"strconv"
 
 	"strings"
 
@@ -14,14 +14,6 @@ import (
 
 	//"github.com/gorilla/sessions"
 )
-
-func floatToStr(f interface{}) string {
-	return strconv.FormatFloat(f.(float64), 'f', 0, 64)
-}
-
-func fmtError(s string, err error) string {
-	return s + fmt.Sprintf("\n\n%#v", err)
-}
 
 //авторизация в вк апи
 func http_auth_vk(w http.ResponseWriter, r *http.Request) {
@@ -162,8 +154,8 @@ func http_auth_vk_load_user_data(d map[string]interface{}) {
 		name := strings.Replace(d["name"].(string), "'", "''", -1)
 		fdata := strings.Replace(d["fdata"].(string), "'", "''", -1)
 
-		query := "INSERT INTO tuser(uuid,id,name,fdata) VALUES('" + d["uuid_user"].(string) + "','" + d["id"].(string) + "'" +
-			",'" + name + "','" + fdata + "')"
+		query := "INSERT INTO tuser(uuid,id,name,fdata,type) VALUES('" + d["uuid_user"].(string) + "','" + d["id"].(string) + "'" +
+			",'" + name + "','" + fdata + "','vk')"
 		_, err := db.Exec(query)
 		if err != nil {
 			d["error"] = fmtError("http_auth_vk_load_user_data ERROR003 db.Exec(query): query:\n"+query+"\n\n", err)
@@ -179,7 +171,7 @@ func http_auth_vk_load_user_data(d map[string]interface{}) {
 		d["fdata"] = mf.ToJsonStr(t)
 		name := strings.Replace(name, "'", "''", -1)
 		fdata := strings.Replace(d["fdata"].(string), "'", "''", -1)
-		query := "UPDATE tuser SET fdata='" + fdata + "',name='" + name + "' WHERE uuid='" + d["uuid_user"].(string) + "'"
+		query := "UPDATE tuser SET fdata='" + fdata + "',name='" + name + "' WHERE uuid='" + d["uuid_user"].(string) + "' AND type='vk'"
 		_, err := db.Exec(query)
 		if err != nil {
 			d["error"] = fmtError("http_auth_vk_load_user_data ERROR004 db.Exec(query): query:\n"+query+"\n\n", err)
@@ -201,6 +193,7 @@ func http_auth_vk_load_user_data(d map[string]interface{}) {
 	}
 
 	d["fdata"] = mf.FromJsonStr([]byte(d["fdata"].(string)))
+	d["type"] = "vk"
 
 	//удаляем лишние данные, все необходимое уже сохранено в бд, далее при внесении изменений сверяем данные сессии с бд
 	delete(d, "access_token")
@@ -212,8 +205,6 @@ func http_auth_vk_load_user_data(d map[string]interface{}) {
 
 	return
 }
-
-//резюме сюда надо отправить:  dev@m1-shop.ru
 
 //отправляем запрос
 func http_auth_vk_send_http_request(urlStr string) map[string]interface{} {

@@ -52,10 +52,24 @@
 <div class="container" style="display:none0;"> 
 <br>
 <center>
+
+<!--
+<script src="//ulogin.ru/js/ulogin.js"></script>
+<div id="uLoginddaab996" data-ulogin="display=panel;fields=first_name,last_name,email;theme=flat;providers=vkontakte,odnoklassniki,google,yandex,mailru,facebook,instagram,twitter,steam;hidden=googleplus,livejournal,openid,lastfm,linkedin,liveid,soundcloud,flickr,uid,youtube,webmoney,foursquare,tumblr,vimeo,wargaming;redirect_uri="></div>
+-->
+<br>
+
 	<a href="https://oauth.vk.com/authorize?client_id=5846108&scope=&redirect_uri=http://{{.http_request.host}}/auth_vk&response_type=code"
 	   class="btn btn-primary">
-	{{if .sess.user}}повторная{{end}} авторизация через вк
+	<!--{{if .sess.user}}повторная{{end}}--> авторизация через вк
 	</a>
+	<br>
+	<a href="https://accounts.google.com/o/oauth2/v2/auth?scope=profile&state=security_token%{{.sess.startsess}}%26url%3Dhttp://{{.http_request.host}}/auth_google&redirect_uri=http://{{.http_request.host}}/auth_google&response_type=code&client_id=1078641315183-n90it8ihgvflh70pp49ohdeom122ks0p.apps.googleusercontent.com&access_type=offline"
+	   class="btn btn-primary">
+	<!--{{if .sess.user}}повторная{{end}}--> авторизация через google
+	</a>
+	
+	
 	<br><br><br>
 	<a href="/logout?1"
 	   class="btn btn-primary">
@@ -74,8 +88,13 @@
 {{end}}
 
 <br><br>
+
 <!--
 <pre>{ {.sess} }</pre>
+<pre>{ {.info} }</pre>
+
+<pre>{ {dump_spew2 .resp_user_info 2 "\t"} }</pre>
+
 
 <pre>{ {dump_spew2 . 2 "\t"} }</pre>
 -->

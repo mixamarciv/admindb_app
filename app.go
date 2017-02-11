@@ -33,17 +33,18 @@ func main() {
 	r.HandleFunc("/main", LogReq(http_main))
 	r.HandleFunc("/admin", LogReq(http_admin))
 
-	r.HandleFunc("/s", LogReq(http_search))
-	r.HandleFunc("/sq", LogReq(http_searchq))
+	r.HandleFunc("/s", LogReq(http_search))   // search
+	r.HandleFunc("/sq", LogReq(http_searchq)) // search ajax data
 
-	r.HandleFunc("/p", LogReq(http_post_view))
+	r.HandleFunc("/p", LogReq(http_post_view)) // view post
 
-	r.HandleFunc("/e", LogReq(http_post_edit))
+	r.HandleFunc("/e", LogReq(http_post_edit)) // edit post
 	r.HandleFunc("/e_ajax", LogReq(http_post_edit_ajax))
 
 	r.HandleFunc("/login", LogReq(http_login))
 	r.HandleFunc("/logout", LogReq(http_logout))
 	r.HandleFunc("/auth_vk", LogReq(http_auth_vk))
+	r.HandleFunc("/auth_google", LogReq(http_auth_google))
 
 	r.HandleFunc("/publish", LogReq(http_publish))
 
