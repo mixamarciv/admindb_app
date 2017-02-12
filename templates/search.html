@@ -56,7 +56,9 @@ function search_form3000__load_data(){
 	if(d.prev_search_text==search_text){
 		d.wait = 0;
 		return
-	}	
+	}
+	
+	set_search_button1_href(search_text);
 	
 	if(d.load){
 		d.wait = 1;
@@ -100,6 +102,12 @@ function search_form3000__load_data_fn(search_text,fn){
 			fn()
 		})
 	},10);
+}
+
+function set_search_button1_href(search_text){
+	var sd = window.search_form3000__data;
+	var href = '/s?d='+sd.db+'&p=1&s='+encodeURIComponent(search_text);
+	$('#search_button1').attr('href',href)
 }
 
 </script>
@@ -213,7 +221,7 @@ function search_form3000__load_data_fn(search_text,fn){
   <div class="input-group" id="search_form3000">
     <input type="text" class="form-control input-lg s_search_input3000" id="s_search_input3000" value="{{if .get_vars.s}}{{index .get_vars.s 0}}{{end}}">
     <span class="input-group-btn">
-      <button class="btn btn-default input-lg" type="button"><big><big> &nbsp; поиск &nbsp; </big></big></button>
+      <a href="#" id="search_button1" class="btn btn-default input-lg" type="button"><big><big> &nbsp; поиск &nbsp; </big></big></a>
     </span>
 
 
