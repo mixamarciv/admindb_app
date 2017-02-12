@@ -43,6 +43,9 @@ func RenderTemplate(w http.ResponseWriter, r *http.Request, d map[string]interfa
 				m[k] = v
 				return ""
 			},
+			"fsum": func(v1, v2 int) int { return v1 + v2 },
+			"fmul": func(v1, v2 int) int { return v1 * v2 },
+
 			//возвращает значение переменной сессии
 			"fsess": func(name, defaultval string) interface{} {
 				return GetSessVal(sess, name, defaultval)

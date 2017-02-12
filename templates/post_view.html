@@ -47,7 +47,7 @@
 	</div>
 	<div class="col-md-3">
 	    <small>db: <a href="/s?d={{.db.ShortName}}"><b>{{.db.Name}}</b></a></small>
-		{{if not (eq .db_access "0") }}
+		{{if not (eq .db_access "1") }}
 			<br><a href="/e?d={{.db.ShortName}}&id={{.data.uuid}}&user={{.user.uuid_user}}" 
 					data-toggle="tooltip" data-placement="bottom" title="редактировать" data-original-title="редактировать" 
 					class="btn btn-primary btn"> 

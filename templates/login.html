@@ -21,7 +21,124 @@
 {{end}}
 
 
+{{$icon_size := 120}}
+{{$icons_padding := -64}}
+{{$icons_pad_left := $icons_padding}}
+{{$icons_pad_top  := $icons_padding}}
+<style>
+.icons{
+	border: 0px solid #aaa;
+	background: url(public/img/social-icons.png);
+	width: {{$icon_size}}px;
+	height: {{$icon_size}}px;
+	display: inline-block;
+	/*margin-right: 20px;*/
+	transition: all .7s;
+}
+.vk-ico{
+	filter: invert(50%);
+	{{$icons_pad_left := fsum $icons_padding (fmul $icon_size -4) }}
+	{{$icons_pad_top := $icons_padding }}
+	background-position: {{$icons_pad_left}}px {{$icons_pad_top}}px;
+}
+.vk-ico:hover{
+	filter: invert(100%);
+	/*background-position: {{$icons_padding}}px {{$icons_padding}}px;*/
+	transform: rotate(360deg);
+}
+.google-ico{
+	filter: invert(50%);
+	{{$icons_pad_left := fsum $icons_padding (fmul $icon_size -2) }}
+	{{$icons_pad_top := $icons_padding }}
+	background-position: {{($icons_pad_left)}}px {{($icons_pad_top)}}px;
+}
+.google-ico:hover{
+	/*background-position: -{{$icon_size}}px -{{$icon_size}}px;*/
+	filter: invert(100%);
+	transform: rotate(360deg);
+}
 
+</style>
+
+
+<div class="page-header">
+    <h1>Авторизация</h1>
+	
+	{{if .success }}
+	<div class="container"><div class="alert alert-dismissible alert-success">
+		  	<button type="button" class="close" data-dismiss="alert">&times;</button>
+		  	<strong>{{.success}}</strong>
+	</div></div>
+	{{end}}
+	
+</div>
+
+Вам не надо придумывать и запоминать логины и пароли, <br>
+Google или соц.сеть сама(с вашего разрешения) сообщит нам ваши id и имя <br>
+<br>
+
+{{mset "auth" "noauth"}}
+{{if and .sess.user .sess.user.type }}
+  {{mset "auth" .sess.user.type}}
+{{end}}
+
+<h4><b>нажмите на иконку</b> сети через которую хотите авторизоваться:</h4>
+<div class="list-group">
+  <div class="list-group-item">
+	<div class="container">
+		<div class="col-md-2 col-sm-2 col-xs-4">
+			<a class="google-ico icons" href="https://accounts.google.com/o/oauth2/v2/auth?scope=profile&state=security_token%{{.sess.startsess}}%26url%3Dhttp://{{.http_request.host}}/auth_google&redirect_uri=http://{{.http_request.host}}/auth_google&response_type=code&client_id=1078641315183-n90it8ihgvflh70pp49ohdeom122ks0p.apps.googleusercontent.com&access_type=offline"></a>
+		</div>
+		<div class="col-md-10 col-sm-10 col-xs-8">
+			<br>
+	    	<h2 class="list-group-item-heading">Google</h2>
+			{{if (eq (mget "auth") "google") }}
+			    вы авторизованы как {{.sess.user.name}} (id:{{.sess.user.id}})
+			{{else}}
+				<p class="list-group-item-text">будут запрошены ваш id, family_name и given_name</p>
+			{{end}}
+	    </div>
+	</div>
+  </div>
+
+  <div class="list-group-item">
+	<div class="container">
+		<div class="col-md-2 col-sm-2 col-xs-4">
+			<a class="vk-ico icons" href="https://oauth.vk.com/authorize?client_id=5846108&scope=&redirect_uri=http://{{.http_request.host}}/auth_vk&response_type=code"></a>
+		</div>
+		<div class="col-md-10 col-sm-10 col-xs-8">
+			<br>
+	    	<h2 class="list-group-item-heading">Вконтакте</h2>
+			{{if (eq (mget "auth") "vk")}}
+			    вы авторизованы как {{.sess.user.name}} (id:{{.sess.user.id}})
+			{{else}}
+	    		<p class="list-group-item-text">будут сохранены ваш id, first_name и last_name</p>
+			{{end}}
+	    </div>
+	</div>
+  </div>
+
+  {{if .sess.user }}
+  <a href="/logout?1" class="list-group-item">
+	<div class="container">
+		<div class="col-md-2 col-sm-2 col-xs-4">
+		</div>
+		<div class="col-md-10 col-sm-10 col-xs-8">
+	    	<h2 class="list-group-item-heading">Выход</h2>
+    		<p class="list-group-item-text">будет удалены куки авторизации пользователя</p>
+	    </div>
+	</div>
+  </a>
+  {{end}}
+
+</div>
+
+
+<!-- ->
+<img src="public/img/social-icons.png">
+<!-- -->
+
+<!--
 <div class="container" style="display:none;"> 
 	{{.user_data}}
 	<form class="form-horizontal" method="POST" action="/login?f={{.get_vars.f}}">
@@ -48,48 +165,16 @@
 	  </fieldset>
 	</form>
 </div>
-
-<div class="container" style="display:none0;"> 
-<br>
-<center>
-
-<!--
-<script src="//ulogin.ru/js/ulogin.js"></script>
-<div id="uLoginddaab996" data-ulogin="display=panel;fields=first_name,last_name,email;theme=flat;providers=vkontakte,odnoklassniki,google,yandex,mailru,facebook,instagram,twitter,steam;hidden=googleplus,livejournal,openid,lastfm,linkedin,liveid,soundcloud,flickr,uid,youtube,webmoney,foursquare,tumblr,vimeo,wargaming;redirect_uri="></div>
 -->
-<br>
-
-	<a href="https://oauth.vk.com/authorize?client_id=5846108&scope=&redirect_uri=http://{{.http_request.host}}/auth_vk&response_type=code"
-	   class="btn btn-primary">
-	<!--{{if .sess.user}}повторная{{end}}--> авторизация через вк
-	</a>
-	<br>
-	<a href="https://accounts.google.com/o/oauth2/v2/auth?scope=profile&state=security_token%{{.sess.startsess}}%26url%3Dhttp://{{.http_request.host}}/auth_google&redirect_uri=http://{{.http_request.host}}/auth_google&response_type=code&client_id=1078641315183-n90it8ihgvflh70pp49ohdeom122ks0p.apps.googleusercontent.com&access_type=offline"
-	   class="btn btn-primary">
-	<!--{{if .sess.user}}повторная{{end}}--> авторизация через google
-	</a>
-	
-	
-	<br><br><br>
-	<a href="/logout?1"
-	   class="btn btn-primary">
-	выход
-	</a>
-</center>
-</div>
 
 
-{{if .success }}
-<br>
-<div class="container"><div class="alert alert-dismissible alert-success">
-	  	<button type="button" class="close" data-dismiss="alert">&times;</button>
-	  	<strong>{{.success}}</strong>
-</div></div>
-{{end}}
 
-<br><br>
+
 
 <!--
+<br><br>
+<pre>{ {dump_spew2 .sess.user 2 "\t"} }</pre>
+
 <pre>{ {.sess} }</pre>
 <pre>{ {.info} }</pre>
 

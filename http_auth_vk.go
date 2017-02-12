@@ -122,20 +122,22 @@ func http_auth_vk_load_user_data(d map[string]interface{}) {
 	//1-только чтение, 2-запись, 3-модерация чужих записей(подтверждение и пубдикация записей)
 
 	db := dbmap["users"].DB
+	prev_query := ""
 
 	//получаем текущие данны пользователя в бд
-	query := "SELECT uuid,name,fdata FROM tuser WHERE id=" + d["id"].(string)
+	query := "SELECT uuid,name,fdata FROM tuser WHERE id='" + d["id"].(string) + "' AND type='vk'"
 	rows, err := db.Query(query)
 	if err != nil {
-		d["error"] = fmtError("http_auth_vk_load_user_data ERROR001 db.Query(query): query:\n"+query+"\n\n", err)
+		d["error"] = fmtError("http_auth_vk_load_user_data ERROR001 db.Query(query): query:\n"+query+"\n\nprev_query:\n"+prev_query+"\n\n", err)
 		return
 	}
+	prev_query = query
 
 	d["uuid_user"] = ""
 	for rows.Next() {
 		var uuid_user, name, fdata NullString
 		if err := rows.Scan(&uuid_user, &name, &fdata); err != nil {
-			d["error"] = fmtError("http_auth_vk_load_user_data ERROR002 rows.Scan: query:\n"+query+"\n\n", err)
+			d["error"] = fmtError("http_auth_vk_load_user_data ERROR002 rows.Scan: query:\n"+query+"\n\nprev_query:\n"+prev_query+"\n\n", err)
 			return
 		}
 		d["uuid_user"] = uuid_user.get("")
@@ -158,9 +160,10 @@ func http_auth_vk_load_user_data(d map[string]interface{}) {
 			",'" + name + "','" + fdata + "','vk')"
 		_, err := db.Exec(query)
 		if err != nil {
-			d["error"] = fmtError("http_auth_vk_load_user_data ERROR003 db.Exec(query): query:\n"+query+"\n\n", err)
+			d["error"] = fmtError("http_auth_vk_load_user_data ERROR003 db.Exec(query): query:\n"+query+"\n\nprev_query:\n"+prev_query+"\n\n", err)
 			return
 		}
+		prev_query = query
 	}
 
 	//если имя пользователя изменилось
@@ -174,9 +177,11 @@ func http_auth_vk_load_user_data(d map[string]interface{}) {
 		query := "UPDATE tuser SET fdata='" + fdata + "',name='" + name + "' WHERE uuid='" + d["uuid_user"].(string) + "' AND type='vk'"
 		_, err := db.Exec(query)
 		if err != nil {
-			d["error"] = fmtError("http_auth_vk_load_user_data ERROR004 db.Exec(query): query:\n"+query+"\n\n", err)
+			d["error"] = fmtError("http_auth_vk_load_user_data ERROR004 db.Exec(query): query:\n"+query+"\n\nprev_query:\n"+prev_query+"\n\n", err)
 			return
 		}
+		prev_query = query
+
 	}
 
 	{ //и в любом случае регистрируем его регистрацию в системе с теми правами которые он получает при регистрации
@@ -187,9 +192,10 @@ func http_auth_vk_load_user_data(d map[string]interface{}) {
 			",'" + d["uuid_user"].(string) + "','" + fdata + "','" + d["access_token"].(string) + "')"
 		_, err := db.Exec(query)
 		if err != nil {
-			d["error"] = fmtError("http_auth_vk_load_user_data ERROR005 db.Exec(query): query:\n"+query+"\n\n", err)
+			d["error"] = fmtError("http_auth_vk_load_user_data ERROR005 db.Exec(query): query:\n"+query+"\n\nprev_query:\n"+prev_query+"\n\n", err)
 			return
 		}
+		prev_query = query
 	}
 
 	d["fdata"] = mf.FromJsonStr([]byte(d["fdata"].(string)))
