@@ -1,15 +1,13 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 	"net/url"
-	//"strconv"
-	"errors"
 	"strings"
 
 	mf "github.com/mixamarciv/gofncstd3000"
-	//"html/template"
 )
 
 //хендлер для /e

@@ -99,7 +99,7 @@ func conn_to_db(shortName, name, path string, NeedAuth bool) *DBd {
 	dbd.Path = include_path.Base(path)
 	dbd.NeedAuth = NeedAuth
 	//path = "d/program/go/projects/test_martini_app/db/DB1.FDB"
-	dbopt := "sysdba:" + gcfg_db_pass + "@127.0.0.1:3050/" + path
+	dbopt := "sysdba:" + gcfg_db_pass + "@127.0.0.1:3051/" + path
 	//dbopt += "?code_page=cp1251&cp=cp1251&codepage=cp1251"
 	var err error
 	db, err := sql.Open("firebirdsql", dbopt)

@@ -1,0 +1,62 @@
+https://oauth.vk.com/authorize?client_id=5802778&scope=offline&redirect_uri=http://admincodebase.info/auth_vk&response_type=code
+
+1) запрашиваем code для нашего приложения (client_id=5802778), для этого просим юзера нажать на ссылку на oauth.vk.com а код вернуть на http://admincodebase.info/auth_vk
+   пример ссылки: https://oauth.vk.com/authorize?client_id=5802778&scope=&redirect_uri=http://admincodebase.info/auth_vk&response_type=code
+
+2) получаем code вот так:
+   http://admincodebase.info/auth_vk?code=edd6ff3253cf1a49da
+
+3) запрашиваем access_token, для этого на oauth.vk.com отправляем code и client_id=5802778&client_secret=grPGl5goraI49DMQOuEp
+   https://oauth.vk.com/access_token?client_id=5802778&client_secret=grPGl5goraI49DMQOuEp&code=edd6ff3253cf1a49da&redirect_uri=http://admincodebase.info& 
+   получаем: {"access_token":"a06b60e75ea6a3095a2293abb31e929374a1de50bb6345ab2bb2a7d6ec2ee8468bd8ae5ba5e6cf82eae5d","expires_in":85790,"user_id":142080324}
+
+
+далее юзаем access_token с нужным нам АПИ:
+https://api.vk.com/method/METHOD_NAME?PARAMETERS&access_token=ACCESS_TOKEN
+
+https://api.vk.com/method/getProfiles?uid=142080324&access_token=a06b60e75ea6a3095a2293abb31e929374a1de50bb6345ab2bb2a7d6ec2ee8468bd8ae5ba5e6cf82eae5d
+https://api.vk.com/method/users.get?uid=142080324,281026416&access_token=a06b60e75ea6a3095a2293abb31e929374a1de50bb6345ab2bb2a7d6ec2ee8468bd8ae5ba5e6cf82eae5d
+
+users.get
+uids
+
+getUserSettings 
+
+------------------------------------------------------------------
+сайты с идеями для продаж товаров - примеры товаров (что продавать)
+http://bubigator.ru/
+http://boombate.com
+
+
+1 Вариант. Продавать товары с маржой не меньше тысячи 2 Вариант. Продавать с заработком не менее 1000 с каждого клиента (за повторные продажи суммарно) 3 Вариант. Продавать по себестоимости, зарабатывать на допродажах
+Anna19:44
+2- периодичная покупка (линзы)
+Яна Валерьевна19:44
+1. 1000 РУБЛЕЙ , 2-ТОВАР ПЕРЕОДИЧЕСКОГО СПРОСА , 3 ОСНОВНОЙ ТОВАР
+
+
+ Google Trends или
+https://wordstat.yandex.ru - 
+от 500 запросов на 1млн жителей города при стоимости товара до 5000руб
+
+
+поставщики оптовые
+optlist.ru, optom-vse.ru, avito.ru, iskalko.ru, irr.ru, z29.ru, tiu.ru
+aliexpress.com, taobao.com, hktdc.com, 1688.com, baidu.com
+
+
+дропшипинг:
+https://vk.com/evgenia_4e?w=wall368849_30869
+
+Попробуйте мыслить не с позиции ограничений. А с точки зрения ВОЗМОЖНОСТЕЙ
+
+
+примеры развития и плана действий:
+https://vk.com/academ_biz?w=wall-49194443_11127
+
+
+автохостинг объявлений на авито "Сервисы автопостинга в Авито" 
+avitopower, vitosap
+
+
+
