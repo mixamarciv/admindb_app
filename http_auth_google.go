@@ -36,7 +36,7 @@ func http_auth_google(w http.ResponseWriter, r *http.Request) {
 			str := "code=" + code
 			str += "&client_id=" + googleapi["id"].(string)
 			str += "&client_secret=" + googleapi["secret"].(string)
-			str += "&redirect_uri=http://" + r.Host + "/auth_google"
+			str += "&redirect_uri=http://anykey.vrashke.net/auth_google"
 			str += "&grant_type=authorization_code"
 			str += ""
 

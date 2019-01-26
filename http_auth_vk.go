@@ -30,7 +30,7 @@ func http_auth_vk(w http.ResponseWriter, r *http.Request) {
 		//отправляем апи запрос на получение access_token
 		urlstr := "https://oauth.vk.com/access_token?"
 		urlstr += "client_id=" + vkapi["id"].(string) + "&client_secret=" + vkapi["secret"].(string)
-		urlstr += "&code=" + code + "&redirect_uri=http://" + r.Host + "/auth_vk"
+		urlstr += "&code=" + code + "&redirect_uri=http://anykey.vrashke.net/auth_vk"
 		d2 := http_auth_vk_send_http_request(urlstr)
 
 		_, err1 := d2["err"]
@@ -43,6 +43,7 @@ func http_auth_vk(w http.ResponseWriter, r *http.Request) {
 		//отправляем запрос на получение данных пользователя
 		urlstr = "https://api.vk.com/method/users.get?uid=" + floatToStr(d2["user_id"])
 		urlstr += "&access_token=" + d2["access_token"].(string)
+		urlstr += "&version=5.8"
 		d3 := http_auth_vk_send_http_request(urlstr)
 		_, err1 = d3["err"]
 		_, err2 = d3["error"]

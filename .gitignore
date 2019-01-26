@@ -4,6 +4,8 @@
 
 *.fdb
 
+admindb_app
+db/**.FDB
 pkg/
 src/github.com/
 src/golang.org/
