@@ -7,6 +7,7 @@
 pkg/
 src/github.com/
 src/golang.org/
+src/gitlab.com/
 log/
 
 templates__old/
