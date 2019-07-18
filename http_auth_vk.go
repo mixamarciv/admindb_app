@@ -43,7 +43,7 @@ func http_auth_vk(w http.ResponseWriter, r *http.Request) {
 		//отправляем запрос на получение данных пользователя
 		urlstr = "https://api.vk.com/method/users.get?uid=" + floatToStr(d2["user_id"])
 		urlstr += "&access_token=" + d2["access_token"].(string)
-		urlstr += "&version=5.8"
+		urlstr += "&v=5.8"
 		d3 := http_auth_vk_send_http_request(urlstr)
 		_, err1 = d3["err"]
 		_, err2 = d3["error"]
